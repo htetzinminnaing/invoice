@@ -8,54 +8,57 @@
     
     <style>
         /* အခြေခံ ဖုန်းဒီဇိုင်း */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fce4ec; margin: 0; padding: 10px; color: #333; }
+        body { font-family: Arial, sans-serif; background-color: #fce4ec; margin: 0; padding: 10px; color: #333; }
         .app-container { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding-bottom: 25px; max-width: 600px; margin: auto; position: relative; overflow: hidden; }
         
+        /* မူလအခြေအနေတွင် ရေစာကို ဖျောက်ထားမည် */
         .watermark { display: none; }
-        .thank-you { display: none; }
         
-        .header { text-align: center; border-bottom: 2px solid #f48fb1; padding-bottom: 12px; margin-bottom: 15px; z-index: 2; position: relative; }
-        .header h1 { color: #d81b60; margin: 0; font-size: 26px; font-weight: bold; font-family: 'Georgia', serif; }
-        .header p { color: #888; margin: 3px 0 0 0; font-size: 13px; }
-        .header .shop-address { color: #555; font-size: 11px; margin-top: 8px; line-height: 1.5; }
+        /* Header Logo Styling */
+        .header { text-align: center; border-bottom: 2px solid #d81b60; padding-bottom: 12px; margin-bottom: 15px; z-index: 2; position: relative; }
+        .header img.shop-logo { width: 100%; max-width: 250px; height: auto; border-radius: 8px; margin-bottom: 8px; }
+        .header .shop-address { color: #555; font-size: 11px; margin-top: 5px; line-height: 1.5; }
         
         .input-group { display: flex; align-items: center; margin-bottom: 12px; z-index: 2; position: relative; }
         .input-group label { width: 100px; min-width: 100px; font-weight: bold; color: #555; font-size: 13px; white-space: nowrap; flex-shrink: 0; }
         .input-group input { flex: 1; min-width: 0; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background-color: #fafafa; box-sizing: border-box; }
-        .input-group input:focus { border-color: #f48fb1; outline: none; background-color: #fff; }
+        .input-group input:focus { border-color: #d81b60; outline: none; background-color: #fff; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 10px; z-index: 2; position: relative; }
-        th { background-color: #f8bbd0; color: #d81b60; padding: 10px 4px; text-align: left; font-size: 13px; border-radius: 4px 4px 0 0; white-space: nowrap; }
-        td { padding: 4px 2px; border-bottom: 1px solid #eee; }
-        td input { width: 100%; padding: 10px 4px; border: 1px solid #eee; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: transparent; }
-        td input:focus { border-color: #f48fb1; outline: none; }
+        th { background-color: #fce4ec; color: #d81b60; padding: 10px 4px; text-align: left; font-size: 13px; border-radius: 4px 4px 0 0; white-space: nowrap; border: 1px solid #d81b60; }
+        td { padding: 4px 2px; border-bottom: 1px solid #eee; border: 1px solid #f8bbd0; }
+        td input { width: 100%; padding: 10px 4px; border: none; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: transparent; }
+        td input:focus { outline: none; }
         
         .remove-btn { background: #ff5252; color: white; border: none; border-radius: 4px; padding: 8px 10px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; }
-        .add-btn { width: 100%; background-color: #fce4ec; color: #d81b60; border: 2px dashed #f48fb1; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; z-index: 2; position: relative; }
+        .add-btn { width: 100%; background-color: #fce4ec; color: #d81b60; border: 2px dashed #d81b60; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; z-index: 2; position: relative; }
         
-        .summary-box { background: #fff0f4; padding: 12px; border-radius: 8px; margin-top: 15px; z-index: 2; position: relative; }
+        .summary-box { background: #fff0f4; padding: 12px; border-radius: 8px; margin-top: 15px; z-index: 2; position: relative; border: 1.5px solid #d81b60; }
         .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; color: #555; }
-        .summary-row span { white-space: nowrap; }
-        .summary-row input { width: 90px; padding: 8px; text-align: right; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-weight: bold;}
-        .total-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: bold; color: #d81b60; margin-top: 8px; padding-top: 8px; border-top: 2px solid #f8bbd0; }
+        .summary-row span { white-space: nowrap; font-weight: bold; }
+        .summary-row input { width: 90px; padding: 8px; text-align: right; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-weight: bold; background: #fff; }
+        .total-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: bold; color: #d81b60; margin-top: 8px; padding-top: 8px; border-top: 2px solid #d81b60; }
         .total-row span { white-space: nowrap; }
         
+        .thank-you { display: block; margin-top: 25px; font-size: 14px; color: #d81b60; font-style: italic; text-align: center; font-weight: bold; display: none; }
+
         /* Export Mode CSS (ဓာတ်ပုံရိုက်မည့်အချိန်အတွက်) */
-        .app-container.exporting { box-shadow: none; padding: 20px; border: 2px solid #f48fb1; border-radius: 15px; background: #fff; }
+        .app-container.exporting { box-shadow: none; padding: 20px; border: 2px solid #d81b60; border-radius: 15px; background: #fff; }
         
+        /* Watermark Logo ပေါ်လာရန် */
         .app-container.exporting .watermark { 
-            display: block; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); 
-            font-size: 38px; color: rgba(216, 27, 96, 0.08); font-family: 'Georgia', serif; font-weight: bold; white-space: nowrap; z-index: 2; pointer-events: none;
+            display: flex; justify-content: center; align-items: center; 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            z-index: 0; pointer-events: none; opacity: 0.12; 
         }
-        .app-container.exporting .thank-you { display: block; border-top: none; margin-top: 30px; font-size: 14px; color: #d81b60; font-style: italic; z-index: 2; position: relative; text-align: center; font-weight: bold; }
+        .app-container.exporting .watermark img { width: 100%; max-width: 400px; height: auto; }
+        
         .app-container.exporting .add-btn, .app-container.exporting .remove-btn { display: none !important; }
         .app-container.exporting th:last-child, .app-container.exporting td:last-child { display: none !important; }
-        .app-container.exporting table { border: 1px solid #d81b60; margin-top: 20px; margin-bottom: 20px; }
-        .app-container.exporting th { background-color: #fce4ec !important; color: #d81b60 !important; border: 1px solid #d81b60; }
-        .app-container.exporting td { border: 1px solid #f8bbd0; height: 30px; }
-        .app-container.exporting .summary-box { background: transparent !important; border: 1.5px solid #d81b60; }
+        .app-container.exporting .summary-row input { border: none; background: transparent; padding: 0; }
         .app-container.exporting .header { border-bottom: 2px solid #d81b60; }
         .app-container.exporting .total-row { border-top: 2px solid #d81b60 !important; }
+        .app-container.exporting .thank-you { display: block; }
 
         .controls-container { max-width: 600px; margin: 20px auto 0 auto; padding: 0 10px; }
         .print-btn { display: block; width: 100%; padding: 14px; background-color: #d81b60; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(216,27,96,0.2); }
@@ -67,7 +70,6 @@
         /* iPhone အတွက် ရလဒ်ပြမည့် စာမျက်နှာ */
         #resultView { display: none; padding: 15px; max-width: 600px; margin: auto; min-height: 100vh; background-color: #fce4ec; }
         .result-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        .result-card p { color: #d81b60; font-weight: bold; font-size: 15px; margin-top: 0; line-height: 1.6; }
         .result-card img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
         .back-btn { background: #555; color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
     </style>
@@ -76,11 +78,14 @@
 
 <div id="mainView">
     <div class="app-container" id="invoiceCard">
-        <div class="watermark">❤ Dressup By May ❤</div>
+        
+        <div class="watermark">
+            <img src="logo.jpg" alt="Watermark Logo">
+        </div>
 
         <div class="header">
-            <h1>✿ Dressup By May ✿</h1>
-            <p>Fashion & Clothing Store</p>
+            <img src="logo.jpg" alt="Dressup By May Logo" class="shop-logo">
+            
             <p class="shop-address">
                 No.428(A), Thuta Street, (4) Ward, South Okkalapa Township, Yangon, Myanmar, <strong>Tel: +95 9 509 5013</strong>
             </p>
@@ -88,15 +93,15 @@
 
         <div class="input-group">
             <label>ဝယ်သူအမည်</label>
-            <input type="text" placeholder="အမည် ထည့်ပါ" autocomplete="off" spellcheck="false" onfocus="this.select()">
+            <input type="text" autocomplete="off" spellcheck="false" onfocus="this.select()">
         </div>
         <div class="input-group">
             <label>ဖုန်းနံပါတ်</label>
-            <input type="text" placeholder="09..." autocomplete="off" onfocus="this.select()">
+            <input type="text" autocomplete="off" onfocus="this.select()">
         </div>
         <div class="input-group">
             <label>ရက်စွဲ/လိပ်စာ</label>
-            <input type="text" placeholder="ပို့ရမည့် လိပ်စာ သို့မဟုတ် ရက်စွဲ" autocomplete="off" spellcheck="false" onfocus="this.select()">
+            <input type="text" autocomplete="off" spellcheck="false" onfocus="this.select()">
         </div>
 
         <table id="invoiceTable">
@@ -110,9 +115,9 @@
             </thead>
             <tbody id="itemsContainer">
                 <tr>
-                    <td><input type="text" placeholder="ဥပမာ-Floral Dress" autocomplete="off" spellcheck="false" onfocus="this.select()"></td>
+                    <td><input type="text" autocomplete="off" spellcheck="false" onfocus="this.select()"></td>
                     <td><input type="number" class="qty" value="1" min="1" oninput="calculateTotal()" style="text-align: center;" autocomplete="off" onfocus="this.select()"></td>
-                    <td><input type="number" class="price" placeholder="0" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off" onfocus="this.select()"></td>
+                    <td><input type="number" class="price" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off" onfocus="this.select()"></td>
                     <td><button type="button" class="remove-btn" onclick="removeItem(this)">X</button></td>
                 </tr>
             </tbody>
@@ -127,7 +132,7 @@
             </div>
             <div class="summary-row">
                 <span>ပို့ဆောင်ခ:</span>
-                <input type="number" id="deliFee" placeholder="0" min="0" oninput="calculateTotal()" style="width: 80px;" autocomplete="off" onfocus="this.select()">
+                <input type="number" id="deliFee" min="0" oninput="calculateTotal()" style="width: 80px;" autocomplete="off" onfocus="this.select()">
             </div>
             <div class="total-row">
                 <span>စုစုပေါင်း:</span>
@@ -148,8 +153,8 @@
 
 <div id="resultView">
     <div class="result-card">
-        <p>👇 အောက်ပါပုံကို ဖိထားပြီး (Long Press)<br><b>"Save Image"</b> (သို့) <b>"Add to Photos"</b> ကို နှိပ်ပါ</p>
         <img id="generatedImg" src="" alt="Invoice Image">
+        <br><br>
         <button type="button" class="back-btn" onclick="goBack()">« နောက်သို့ ပြန်သွားမည်</button>
     </div>
 </div>
@@ -177,9 +182,9 @@
         let newRow = document.createElement('tr');
         
         newRow.innerHTML = `
-            <td><input type="text" placeholder="ပစ္စည်းအမည် ထည့်ပါ" autocomplete="off" spellcheck="false" onfocus="this.select()"></td>
+            <td><input type="text" autocomplete="off" spellcheck="false" onfocus="this.select()"></td>
             <td><input type="number" class="qty" value="1" min="1" oninput="calculateTotal()" style="text-align: center;" autocomplete="off" onfocus="this.select()"></td>
-            <td><input type="number" class="price" placeholder="0" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off" onfocus="this.select()"></td>
+            <td><input type="number" class="price" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off" onfocus="this.select()"></td>
             <td><button type="button" class="remove-btn" onclick="removeItem(this)">X</button></td>
         `;
         
@@ -200,7 +205,6 @@
     }
 
     function saveAsImage() {
-        // Safari Viewport ပြဿနာမဖြစ်စေရန် အပေါ်ဆုံးသို့ ရွှေ့ပေးခြင်း
         window.scrollTo(0, 0);
 
         let container = document.getElementById('invoiceCard');
@@ -226,11 +230,11 @@
         });
 
         setTimeout(() => {
+            // လုံခြုံရေးပြဿနာ မဖြစ်စေရန် useCORS: true သာထားပြီး allowTaint ကို ဖြုတ်လိုက်ပါသည်
             html2canvas(container, { 
                 scale: 2, 
-                useCORS: true, 
                 backgroundColor: "#ffffff",
-                allowTaint: true 
+                useCORS: true 
             }).then(canvas => {
                 
                 let tempTexts = container.querySelectorAll('.temp-text');
@@ -250,12 +254,11 @@
                 window.scrollTo(0, 0); 
                 
             }).catch(err => {
-                // Error ဖြစ်လျှင် မူလအတိုင်းပြန်ထားရန်
                 let tempTexts = container.querySelectorAll('.temp-text');
                 tempTexts.forEach(span => span.remove());
                 inputs.forEach(input => input.style.display = '');
                 
-                alert("စနစ်ချို့ယွင်းမှုဖြစ်ပေါ်ပါသည်။ ကျေးဇူးပြု၍ ပြန်လည်ကြိုးစားကြည့်ပါ။");
+                alert("ပုံထုတ်ရာတွင် အခက်အခဲရှိနေပါသည်။ GitHub ပေါ်တွင် ဖွင့်စမ်းခြင်း ဟုတ်မဟုတ် စစ်ဆေးပါ။ (Error: " + err.message + ")");
                 saveBtn.style.display = 'block';
                 loadingMsg.style.display = 'none';
                 container.classList.remove('exporting');
