@@ -85,7 +85,7 @@
         .close-history { background: #555; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
         
         .filter-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .filter-group input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .filter-group input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
         .filter-group button { background: #d81b60; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         
         .total-sales-badge { background: #fff0f4; border: 1px dashed #d81b60; padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; color: #d81b60; margin-bottom: 15px; }
@@ -93,20 +93,19 @@
         .record-item { border-bottom: 1px solid #eee; padding: 12px 0; }
         .record-item:last-child { border-bottom: none; }
         .record-title { font-weight: bold; color: #333; font-size: 14px; margin-bottom: 4px; display: flex; justify-content: space-between; }
-        .record-detail { color: #777; font-size: 12px; display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+        .record-detail { color: #777; font-size: 12px; display: flex; justify-content: space-between; align-items: center; margin-top: 6px; line-height: 1.5; }
         .record-amount { color: #d81b60; font-weight: bold; font-size: 15px; }
         
         .delete-record-btn { background: #ff5252; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
         
-        /* Loading Animation */
-        .loading-text { text-align: center; color: #d81b60; font-weight: bold; padding: 20px 0; }
+        .loading-text { text-align: center; color: #d81b60; font-weight: bold; font-size: 14px; padding: 20px; }
     </style>
 </head>
 <body>
 
 <div id="mainView">
     <div class="top-nav">
-        <button class="report-btn" onclick="openHistory()">📊 Sales Report</button>
+        <button class="report-btn" onclick="openHistory()">📊 Online Sales Report</button>
     </div>
 
     <div class="app-container" id="invoiceCard">
@@ -192,16 +191,16 @@
 <div id="historyView">
     <div class="history-card">
         <div class="history-header">
-            <h2>Sales Report (Online)</h2>
+            <h2>Online Sales Report</h2>
             <button class="close-history" onclick="closeHistory()">Close</button>
         </div>
         
         <div class="filter-group">
-            <input type="date" id="filterDate" onchange="applyFilter()">
-            <input type="month" id="filterMonth" onchange="applyFilter()">
+            <input type="date" id="filterDate" onchange="loadHistory('date')">
+            <input type="month" id="filterMonth" onchange="loadHistory('month')">
         </div>
         <div style="text-align: center; margin-bottom: 15px;">
-            <button onclick="clearFilters()" style="background: #888; color:white; border:none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Show All Time</button>
+            <button onclick="loadHistory('all')" style="background: #888; color:white; border:none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Show All Time</button>
         </div>
 
         <div class="total-sales-badge">
@@ -210,15 +209,14 @@
 
         <div id="historyList">
             </div>
+        
+        <p style="text-align:center; font-size: 11px; color:#888; margin-top: 20px;">* Data is securely saved in your Google Sheet.</p>
     </div>
 </div>
 
 <script>
-    // --- Google Sheets API Link ---
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwM80GzKNRSw1gExBuo8bbByHDTbEUtPCyZ9hZoszZ3NgeOGE5XG4GbCNPFh0zuys2P/exec";
-    
-    // မှတ်တမ်းအားလုံးကို ယာယီသိမ်းထားမည့် ကိန်းရှင်
-    let onlineRecords = [];
+    // --- Google App Script API Link ---
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLgvYEDVw0mgftIaF0DgzCQapiMTPVuE_5eTCxRknJHE0_h-xJO5Zz1zwOu_DTY-KP/exec";
 
     // --- Invoice Logic ---
     function calculateTotal() {
@@ -256,7 +254,7 @@
         calculateTotal();
     }
 
-    // --- Google Sheets သို့ စာရင်းပို့ခြင်း ---
+    // --- Save Data Online (Google Sheets) ---
     function saveRecordToOnline() {
         let totalAmount = calculateTotal();
         if(totalAmount === 0) return; 
@@ -270,10 +268,14 @@
         let itemsSummary = itemNames.length > 0 ? itemNames.join(', ') : 'Items';
 
         let now = new Date();
-        let dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+        // လ/ရက် ဂဏန်းများကို 2 လုံးပြည့်အောင် ဖြည့်ပေးမည် (ဥပမာ 02, 09)
+        let mm = String(now.getMonth() + 1).padStart(2, '0');
+        let dd = String(now.getDate()).padStart(2, '0');
+        
+        let dateStr = now.getFullYear() + '-' + mm + '-' + dd;
         let timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
-        // POST Data တွဲခြင်း
+        // POST Data ပြင်ဆင်ခြင်း
         let formData = new URLSearchParams();
         formData.append('action', 'insert');
         formData.append('date', dateStr);
@@ -282,14 +284,15 @@
         formData.append('items', itemsSummary);
         formData.append('totalAmount', totalAmount);
 
-        // API သို့ ပို့ခြင်း (Background တွင် လုပ်ဆောင်မည်)
+        // Google Sheet သို့ လှမ်းပို့ခြင်း (Background တွင် အလုပ်လုပ်မည်)
         fetch(SCRIPT_URL, {
             method: 'POST',
             body: formData
-        }).then(res => res.text()).catch(err => console.log(err));
+        }).then(res => console.log('Successfully saved to Google Sheets.'))
+          .catch(err => console.error('Error saving data:', err));
     }
 
-    // --- History View Logic ---
+    // --- History View Logic (Online) ---
     function openHistory() {
         document.getElementById('mainView').style.display = 'none';
         document.getElementById('historyView').style.display = 'block';
@@ -299,7 +302,7 @@
         document.getElementById('filterDate').value = dateStr;
         document.getElementById('filterMonth').value = '';
         
-        fetchOnlineHistory();
+        loadHistory('date');
     }
 
     function closeHistory() {
@@ -307,98 +310,94 @@
         document.getElementById('mainView').style.display = 'block';
     }
 
-    function fetchOnlineHistory() {
-        let listContainer = document.getElementById('historyList');
-        listContainer.innerHTML = '<div class="loading-text">Loading data from Google Sheets... ⏳</div>';
-        document.getElementById('historyTotalAmount').innerText = "0";
-
-        // Google Sheet မှ စာရင်းများကို လှမ်းယူခြင်း
-        fetch(SCRIPT_URL)
-            .then(response => response.json())
-            .then(data => {
-                onlineRecords = data; // ရလာသောစာရင်းကို သိမ်းထားမည်
-                applyFilter(); // Filter ပြန်စစ်မည်
-            })
-            .catch(error => {
-                listContainer.innerHTML = '<div class="loading-text" style="color:red;">Failed to load data. Please check internet connection.</div>';
-            });
-    }
-
-    function applyFilter() {
+    function loadHistory(filterType) {
         let listContainer = document.getElementById('historyList');
         let totalAmountEl = document.getElementById('historyTotalAmount');
-        let selectedDate = document.getElementById('filterDate').value;
-        let selectedMonth = document.getElementById('filterMonth').value;
         
-        let filteredRecords = [];
+        // Data ဆွဲယူနေစဉ် Loading ပြပေးမည်
+        listContainer.innerHTML = '<div class="loading-text">Loading data from Database... ⏳</div>';
+        totalAmountEl.innerText = "0";
 
-        if (selectedDate !== "") {
-            document.getElementById('filterMonth').value = ''; 
-            filteredRecords = onlineRecords.filter(r => r.date === selectedDate);
-        } else if (selectedMonth !== "") {
-            document.getElementById('filterDate').value = ''; 
-            // monthStr သည် YYYY-MM ဖြစ်သဖြင့် ရက်စွဲမှ အစစာလုံး ၇ လုံးကို ယူစစ်မည်
-            filteredRecords = onlineRecords.filter(r => r.date.substring(0, 7) === selectedMonth);
-        } else {
-            filteredRecords = onlineRecords; // အားလုံးပြမည်
-        }
+        // Google Sheet မှ Data များကို ဆွဲယူခြင်း
+        fetch(SCRIPT_URL)
+            .then(res => res.json())
+            .then(history => {
+                let filteredRecords = [];
+                
+                if (filterType === 'date') {
+                    let selectedDate = document.getElementById('filterDate').value;
+                    document.getElementById('filterMonth').value = ''; 
+                    // Date ပါဝင်မှုဖြင့် ရှာဖွေမည်
+                    filteredRecords = history.filter(r => r.date.includes(selectedDate));
+                } else if (filterType === 'month') {
+                    let selectedMonth = document.getElementById('filterMonth').value;
+                    document.getElementById('filterDate').value = ''; 
+                    // YYYY-MM ပါဝင်မှုဖြင့် ရှာဖွေမည်
+                    filteredRecords = history.filter(r => r.date.includes(selectedMonth));
+                } else {
+                    document.getElementById('filterDate').value = '';
+                    document.getElementById('filterMonth').value = '';
+                    filteredRecords = history;
+                }
 
-        // နောက်ဆုံးရောင်းရတာကို အပေါ်ဆုံးထားမည်
-        filteredRecords.reverse(); 
+                // အသစ်ဆုံးကို အပေါ်မှာထားရန် ပြောင်းပြန်လှန်မည်
+                filteredRecords.reverse(); 
 
-        listContainer.innerHTML = '';
-        let calcTotal = 0;
+                listContainer.innerHTML = '';
+                let calcTotal = 0;
 
-        if (filteredRecords.length === 0) {
-            listContainer.innerHTML = '<p style="text-align:center; color:#888;">No records found for this period.</p>';
-        } else {
-            filteredRecords.forEach(record => {
-                calcTotal += Number(record.totalAmount);
-                let itemDiv = document.createElement('div');
-                itemDiv.className = 'record-item';
-                itemDiv.innerHTML = `
-                    <div class="record-title">
-                        <span>${record.customer}</span>
-                        <span class="record-amount">${Number(record.totalAmount).toLocaleString()} Ks</span>
-                    </div>
-                    <div class="record-detail">
-                        <span>📅 ${record.date} (${record.time})<br>🛍️ ${record.items}</span>
-                        <button class="delete-record-btn" onclick="deleteOnlineRecord(${record.row})">❌ Delete</button>
-                    </div>
-                `;
-                listContainer.appendChild(itemDiv);
+                if (filteredRecords.length === 0) {
+                    listContainer.innerHTML = '<p style="text-align:center; color:#888; padding: 20px;">No sales records found.</p>';
+                } else {
+                    filteredRecords.forEach(record => {
+                        let amount = parseFloat(record.totalAmount) || 0;
+                        calcTotal += amount;
+                        
+                        let itemDiv = document.createElement('div');
+                        itemDiv.className = 'record-item';
+                        itemDiv.innerHTML = `
+                            <div class="record-title">
+                                <span>${record.customer}</span>
+                                <span class="record-amount">${amount.toLocaleString()} Ks</span>
+                            </div>
+                            <div class="record-detail">
+                                <span>📅 ${record.date} (${record.time})<br>🛍️ ${record.items}</span>
+                                <button class="delete-record-btn" onclick="deleteSingleRecord(${record.row})">❌ Delete</button>
+                            </div>
+                        `;
+                        listContainer.appendChild(itemDiv);
+                    });
+                }
+                
+                totalAmountEl.innerText = calcTotal.toLocaleString();
+            })
+            .catch(error => {
+                listContainer.innerHTML = '<p style="text-align:center; color:red; padding: 20px;">Failed to load data. Please check internet connection.</p>';
             });
-        }
-        
-        totalAmountEl.innerText = calcTotal.toLocaleString();
     }
 
-    function clearFilters() {
-        document.getElementById('filterDate').value = '';
-        document.getElementById('filterMonth').value = '';
-        applyFilter();
-    }
-
-    // Google Sheet ထဲမှ မှားသောစာရင်းကို ဖျက်ခြင်း
-    function deleteOnlineRecord(rowNumber) {
-        if(confirm("Are you sure you want to delete this specific record from Cloud?")) {
+    function deleteSingleRecord(rowId) {
+        if(confirm("Are you sure you want to delete this specific record from Online Database?")) {
             let listContainer = document.getElementById('historyList');
             listContainer.innerHTML = '<div class="loading-text">Deleting record... ⏳</div>';
 
             let formData = new URLSearchParams();
             formData.append('action', 'delete');
-            formData.append('row', rowNumber);
+            formData.append('row', rowId);
 
             fetch(SCRIPT_URL, {
                 method: 'POST',
                 body: formData
-            }).then(res => res.text()).then(data => {
-                // ဖျက်ပြီးပါက စာရင်းအသစ် ပြန်ခေါ်မည်
-                fetchOnlineHistory();
-            }).catch(err => {
-                alert("Delete failed.");
-                fetchOnlineHistory();
-            });
+            })
+            .then(res => res.text())
+            .then(text => {
+                // ဖျက်ပြီးပါက ရှိရင်းစွဲ Filter အတိုင်း ပြန်လည် Refresh လုပ်မည်
+                let currentFilter = 'all';
+                if (document.getElementById('filterDate').value) currentFilter = 'date';
+                else if (document.getElementById('filterMonth').value) currentFilter = 'month';
+                loadHistory(currentFilter);
+            })
+            .catch(err => alert("Failed to delete record."));
         }
     }
 
@@ -430,7 +429,7 @@
     function saveAsImage() {
         window.scrollTo(0, 0);
         
-        // ဓာတ်ပုံမရိုက်မီ Google Sheet သို့ စာရင်းပို့မည်
+        // ဘောက်ချာထုတ်ချိန်တွင် Google Sheet သို့ အလိုအလျောက် သိမ်းမည်
         saveRecordToOnline();
 
         let container = document.getElementById('invoiceCard');
