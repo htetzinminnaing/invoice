@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dressup By May - Invoice</title>
+    <title>Dressup By May - Invoice & Sales</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
@@ -12,6 +12,10 @@
         .app-container { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding-bottom: 25px; max-width: 600px; margin: auto; position: relative; overflow: hidden; }
         
         .watermark { display: none; }
+        
+        /* Top Navigation */
+        .top-nav { max-width: 600px; margin: 0 auto 10px auto; text-align: right; }
+        .report-btn { background: #d81b60; color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; box-shadow: 0 2px 5px rgba(216,27,96,0.2); }
         
         /* Header Logo Styling */
         .header { text-align: center; border-bottom: 2px solid #d81b60; padding-bottom: 12px; margin-bottom: 15px; z-index: 2; position: relative; }
@@ -47,14 +51,8 @@
 
         /* Export Mode CSS */
         .app-container.exporting { box-shadow: none; padding: 20px; border: 2px solid #d81b60; border-radius: 15px; background: #fff; }
-        
-        .app-container.exporting .watermark { 
-            display: flex; justify-content: center; align-items: center; 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            z-index: 0; pointer-events: none; opacity: 0.12; 
-        }
+        .app-container.exporting .watermark { display: flex; justify-content: center; align-items: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; opacity: 0.12; }
         .app-container.exporting .watermark img { width: 80%; max-width: 400px; height: auto; }
-        
         .app-container.exporting .add-btn, .app-container.exporting .remove-btn { display: none !important; }
         .app-container.exporting th:last-child, .app-container.exporting td:last-child { display: none !important; }
         .app-container.exporting .summary-row input { border: none; background: transparent; padding: 0; }
@@ -69,33 +67,56 @@
         
         .temp-text { flex: 1; min-width: 0; font-size: 14px; color: #000; padding: 0 10px; box-sizing: border-box; overflow-wrap: break-word; }
 
-        /* Result View */
+        /* Image Result View */
         #resultView { display: none; padding: 15px; max-width: 600px; margin: auto; min-height: 100vh; background-color: #fce4ec; }
         .result-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
         .result-card img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
         .back-btn { background: #555; color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+
+        /* Sales History View (New) */
+        #historyView { display: none; padding: 10px; max-width: 600px; margin: auto; min-height: 100vh; background-color: #fce4ec; }
+        .history-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .history-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f8bbd0; padding-bottom: 10px; margin-bottom: 15px; }
+        .history-header h2 { color: #d81b60; margin: 0; font-size: 20px; }
+        .close-history { background: #555; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        
+        .filter-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .filter-group input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .filter-group button { background: #d81b60; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        
+        .total-sales-badge { background: #fff0f4; border: 1px dashed #d81b60; padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; color: #d81b60; margin-bottom: 15px; }
+        
+        .record-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .record-item:last-child { border-bottom: none; }
+        .record-title { font-weight: bold; color: #333; font-size: 14px; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .record-detail { color: #777; font-size: 12px; }
+        .record-amount { color: #d81b60; font-weight: bold; }
+        
+        .clear-data-btn { width: 100%; background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 10px; margin-top: 20px; border-radius: 6px; cursor: pointer; font-size: 13px; }
     </style>
 </head>
 <body>
 
 <div id="mainView">
+    <div class="top-nav">
+        <button class="report-btn" onclick="openHistory()">📊 Sales Report</button>
+    </div>
+
     <div class="app-container" id="invoiceCard">
-        
         <div class="watermark">
             <img src="logo.jpg" alt="Watermark Logo">
         </div>
 
         <div class="header">
             <img src="logo.jpg" alt="Dressup By May Logo" class="shop-logo">
-            
             <p class="shop-address">
-                No.428(A), Thuta Street, (4) Ward, South Okkalapa Township, Yangon, Myanmar. <strong>Tel: +95 9 509 5013</strong>
+                No.428(A), Thuta Street, (4) Ward, South Okkalapa Township, Yangon, Myanmar<br><strong>Tel: +95 9 509 5013</strong>
             </p>
         </div>
 
         <div class="input-group">
             <label>Customer Name</label>
-            <input type="text" placeholder="Enter name" autocomplete="off" spellcheck="false" onfocus="this.select()">
+            <input type="text" id="custName" placeholder="Enter name" autocomplete="off" spellcheck="false" onfocus="this.select()">
         </div>
         <div class="input-group">
             <label>Phone Number</label>
@@ -117,7 +138,7 @@
             </thead>
             <tbody id="itemsContainer">
                 <tr>
-                    <td><input type="text" placeholder="e.g. Floral Dress" autocomplete="off" spellcheck="false" onfocus="this.select()"></td>
+                    <td><input type="text" class="itemName" placeholder="e.g. Floral Dress" autocomplete="off" spellcheck="false" onfocus="this.select()"></td>
                     <td><input type="number" class="qty" value="1" min="1" oninput="calculateTotal()" style="text-align: center;" autocomplete="off" onfocus="this.select()"></td>
                     <td><input type="number" class="price" placeholder="0" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off" onfocus="this.select()"></td>
                     <td><button type="button" class="remove-btn" onclick="removeItem(this)">X</button></td>
@@ -157,15 +178,41 @@
     <div class="result-card">
         <img id="generatedImg" src="" alt="Invoice Image">
         <br><br>
-        <button type="button" class="back-btn" onclick="goBack()">« Go Back</button>
+        <button type="button" class="back-btn" onclick="goBackToMain()">« Go Back</button>
+    </div>
+</div>
+
+<div id="historyView">
+    <div class="history-card">
+        <div class="history-header">
+            <h2>Sales Report</h2>
+            <button class="close-history" onclick="closeHistory()">Close</button>
+        </div>
+        
+        <div class="filter-group">
+            <input type="date" id="filterDate" onchange="loadHistory('date')">
+            <input type="month" id="filterMonth" onchange="loadHistory('month')">
+        </div>
+        <div style="text-align: center; margin-bottom: 15px;">
+            <button onclick="loadHistory('all')" style="background: #888; color:white; border:none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Show All Time</button>
+        </div>
+
+        <div class="total-sales-badge">
+            Total Sales: <span id="historyTotalAmount">0</span> Ks
+        </div>
+
+        <div id="historyList">
+            </div>
+        
+        <button class="clear-data-btn" onclick="clearHistory()">⚠️ Clear All Data</button>
     </div>
 </div>
 
 <script>
+    // --- Invoice Logic ---
     function calculateTotal() {
         let subTotal = 0;
         let rows = document.querySelectorAll('#itemsContainer tr');
-        
         rows.forEach(row => {
             let qty = row.querySelector('.qty').value || 0;
             let price = row.querySelector('.price').value || 0;
@@ -177,30 +224,143 @@
         
         document.getElementById('subTotal').innerText = subTotal.toLocaleString();
         document.getElementById('finalTotal').innerText = finalTotal.toLocaleString();
+        return finalTotal; // Return for save function
     }
 
     function addItem() {
         let tbody = document.getElementById('itemsContainer');
         let newRow = document.createElement('tr');
-        
         newRow.innerHTML = `
-            <td><input type="text" placeholder="e.g. Floral Dress" autocomplete="off" spellcheck="false" onfocus="this.select()"></td>
+            <td><input type="text" class="itemName" placeholder="e.g. Floral Dress" autocomplete="off" spellcheck="false" onfocus="this.select()"></td>
             <td><input type="number" class="qty" value="1" min="1" oninput="calculateTotal()" style="text-align: center;" autocomplete="off" onfocus="this.select()"></td>
             <td><input type="number" class="price" placeholder="0" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off" onfocus="this.select()"></td>
             <td><button type="button" class="remove-btn" onclick="removeItem(this)">X</button></td>
         `;
-        
         tbody.appendChild(newRow);
         calculateTotal();
     }
 
     function removeItem(btn) {
-        let row = btn.closest('tr');
-        row.remove();
+        btn.closest('tr').remove();
         calculateTotal();
     }
 
-    function goBack() {
+    // --- Save Data Logic (New) ---
+    function saveRecordToStorage() {
+        let totalAmount = calculateTotal();
+        if(totalAmount === 0) return; // စုစုပေါင်း သုညဖြစ်နေလျှင် မသိမ်းပါ
+
+        let customer = document.getElementById('custName').value || 'Unknown Customer';
+        
+        // Item နာမည်များကို စုစည်းမည်
+        let itemNames = [];
+        document.querySelectorAll('.itemName').forEach(input => {
+            if(input.value.trim() !== '') itemNames.push(input.value.trim());
+        });
+        let itemsSummary = itemNames.length > 0 ? itemNames.join(', ') : 'Items';
+
+        // ယနေ့ ရက်စွဲနှင့် အချိန် ယူမည်
+        let now = new Date();
+        // YYYY-MM-DD format (for filtering)
+        let dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+        // YYYY-MM format (for month filtering)
+        let monthStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+        
+        let newRecord = {
+            id: Date.now(),
+            date: dateStr,
+            month: monthStr,
+            time: now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            customer: customer,
+            items: itemsSummary,
+            amount: totalAmount
+        };
+
+        // Local Storage သို့ သိမ်းမည်
+        let history = JSON.parse(localStorage.getItem('dressup_sales')) || [];
+        history.push(newRecord);
+        localStorage.setItem('dressup_sales', JSON.stringify(history));
+    }
+
+    // --- History View Logic (New) ---
+    function openHistory() {
+        document.getElementById('mainView').style.display = 'none';
+        document.getElementById('historyView').style.display = 'block';
+        
+        // အလွယ်တကူရှာနိုင်ရန် ယနေ့ရက်စွဲကို အလိုအလျောက် ရွေးပေးထားမည်
+        let today = new Date();
+        let dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+        document.getElementById('filterDate').value = dateStr;
+        document.getElementById('filterMonth').value = '';
+        
+        loadHistory('date');
+    }
+
+    function closeHistory() {
+        document.getElementById('historyView').style.display = 'none';
+        document.getElementById('mainView').style.display = 'block';
+    }
+
+    function loadHistory(filterType) {
+        let history = JSON.parse(localStorage.getItem('dressup_sales')) || [];
+        let listContainer = document.getElementById('historyList');
+        let totalAmountEl = document.getElementById('historyTotalAmount');
+        
+        let filteredRecords = [];
+        
+        if (filterType === 'date') {
+            let selectedDate = document.getElementById('filterDate').value;
+            document.getElementById('filterMonth').value = ''; // Reset month filter
+            filteredRecords = history.filter(r => r.date === selectedDate);
+        } else if (filterType === 'month') {
+            let selectedMonth = document.getElementById('filterMonth').value;
+            document.getElementById('filterDate').value = ''; // Reset date filter
+            filteredRecords = history.filter(r => r.month === selectedMonth);
+        } else {
+            // Show all
+            document.getElementById('filterDate').value = '';
+            document.getElementById('filterMonth').value = '';
+            filteredRecords = history;
+        }
+
+        // ဇောက်ထိုးပြမည် (အသစ်ဆုံးကို အပေါ်တင်မည်)
+        filteredRecords.reverse();
+
+        listContainer.innerHTML = '';
+        let calcTotal = 0;
+
+        if (filteredRecords.length === 0) {
+            listContainer.innerHTML = '<p style="text-align:center; color:#888;">No records found for this period.</p>';
+        } else {
+            filteredRecords.forEach(record => {
+                calcTotal += record.amount;
+                let itemDiv = document.createElement('div');
+                itemDiv.className = 'record-item';
+                itemDiv.innerHTML = `
+                    <div class="record-title">
+                        <span>${record.customer}</span>
+                        <span class="record-amount">${record.amount.toLocaleString()} Ks</span>
+                    </div>
+                    <div class="record-detail">
+                        📅 ${record.date} (${record.time}) | 🛍️ ${record.items}
+                    </div>
+                `;
+                listContainer.appendChild(itemDiv);
+            });
+        }
+        
+        totalAmountEl.innerText = calcTotal.toLocaleString();
+    }
+
+    function clearHistory() {
+        if(confirm("Are you sure you want to delete ALL sales records? This cannot be undone.")) {
+            localStorage.removeItem('dressup_sales');
+            loadHistory('all');
+        }
+    }
+
+    // --- Image Generation Logic ---
+    function goBackToMain() {
         document.getElementById('resultView').style.display = 'none';
         document.getElementById('mainView').style.display = 'block';
         window.scrollTo(0, 0); 
@@ -208,6 +368,9 @@
 
     function saveAsImage() {
         window.scrollTo(0, 0);
+        
+        // ဓာတ်ပုံမရိုက်မီ စာရင်းကို အလိုအလျောက် သိမ်းမည်
+        saveRecordToStorage();
 
         let container = document.getElementById('invoiceCard');
         let saveBtn = document.getElementById('saveBtn');
@@ -222,23 +385,15 @@
             let span = document.createElement('span');
             span.className = 'temp-text';
             span.innerText = input.value || ' '; 
-            
             if(input.classList.contains('qty') || input.style.textAlign === 'center') span.style.textAlign = 'center';
             if(input.classList.contains('price') || input.style.textAlign === 'right') span.style.textAlign = 'right';
             if(input.id === 'deliFee') span.style.textAlign = 'right';
-
             input.parentNode.insertBefore(span, input);
             input.style.display = 'none';
         });
 
         setTimeout(() => {
-            html2canvas(container, { 
-                scale: 2, 
-                backgroundColor: "#ffffff",
-                logging: false,
-                useCORS: true 
-            }).then(canvas => {
-                
+            html2canvas(container, { scale: 2, backgroundColor: "#ffffff", logging: false, useCORS: true }).then(canvas => {
                 let tempTexts = container.querySelectorAll('.temp-text');
                 tempTexts.forEach(span => span.remove());
                 inputs.forEach(input => input.style.display = '');
@@ -248,19 +403,15 @@
                 loadingMsg.style.display = 'none';
 
                 let imgData = canvas.toDataURL('image/jpeg', 0.95);
-                
                 document.getElementById('generatedImg').src = imgData;
                 document.getElementById('mainView').style.display = 'none';
                 document.getElementById('resultView').style.display = 'block';
-                
                 window.scrollTo(0, 0); 
-                
             }).catch(err => {
                 let tempTexts = container.querySelectorAll('.temp-text');
                 tempTexts.forEach(span => span.remove());
                 inputs.forEach(input => input.style.display = '');
-                
-                alert("Cannot generate image. Please ensure you are running this from GitHub. (Error: " + err.message + ")");
+                alert("Cannot generate image. Error: " + err.message);
                 saveBtn.style.display = 'block';
                 loadingMsg.style.display = 'none';
                 container.classList.remove('exporting');
