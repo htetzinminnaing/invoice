@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dressup By May - Invoice</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fce4ec; margin: 0; padding: 10px; color: #333; }
+        .app-container { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding-bottom: 25px; max-width: 600px; margin: auto; position: relative; overflow: hidden; }
+        
+        .floral-bg, .watermark, .thank-you { display: none; }
+        
+        .header { text-align: center; border-bottom: 2px solid #f48fb1; padding-bottom: 12px; margin-bottom: 15px; z-index: 2; position: relative; }
+        .header h1 { color: #d81b60; margin: 0; font-size: 26px; font-weight: bold; font-family: 'Georgia', serif; }
+        .header p { color: #888; margin: 3px 0 0 0; font-size: 13px; }
+        .header .shop-address { color: #555; font-size: 11px; margin-top: 8px; line-height: 1.5; }
+        
+        .input-group { display: flex; align-items: center; margin-bottom: 12px; z-index: 2; position: relative; }
+        .input-group label { width: 100px; min-width: 100px; font-weight: bold; color: #555; font-size: 13px; white-space: nowrap; flex-shrink: 0; }
+        .input-group input { flex: 1; min-width: 0; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background-color: #fafafa; box-sizing: border-box; }
+        .input-group input:focus { border-color: #f48fb1; outline: none; background-color: #fff; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; z-index: 2; position: relative; }
+        th { background-color: #f8bbd0; color: #d81b60; padding: 10px 4px; text-align: left; font-size: 13px; border-radius: 4px 4px 0 0; white-space: nowrap; }
+        td { padding: 4px 2px; border-bottom: 1px solid #eee; }
+        td input { width: 100%; padding: 10px 4px; border: 1px solid #eee; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: transparent; }
+        td input:focus { border-color: #f48fb1; outline: none; }
+        
+        .remove-btn { background: #ff5252; color: white; border: none; border-radius: 4px; padding: 8px 10px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; }
+        .add-btn { width: 100%; background-color: #fce4ec; color: #d81b60; border: 2px dashed #f48fb1; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; z-index: 2; position: relative; }
+        
+        .summary-box { background: #fff0f4; padding: 12px; border-radius: 8px; margin-top: 15px; z-index: 2; position: relative; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; color: #555; }
+        .summary-row span { white-space: nowrap; }
+        .summary-row input { width: 90px; padding: 8px; text-align: right; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-weight: bold;}
+        .total-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: bold; color: #d81b60; margin-top: 8px; padding-top: 8px; border-top: 2px solid #f8bbd0; }
+        .total-row span { white-space: nowrap; }
+        
+        /* Export Mode CSS */
+        .app-container.exporting { box-shadow: none; padding: 20px; border: 2px solid #f48fb1; border-radius: 15px; background: #fff; }
+        .app-container.exporting .floral-bg {
+            display: block; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath fill='%23d81b60' fill-opacity='0.04' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/svg%3E");
+            z-index: 1; pointer-events: none;
+        }
+        .app-container.exporting .watermark { 
+            display: block; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); 
+            font-size: 38px; color: rgba(216, 27, 96, 0.12); font-family: 'Georgia', serif; font-weight: bold; white-space: nowrap; z-index: 2; pointer-events: none;
+        }
+        .app-container.exporting .thank-you { display: block; border-top: none; margin-top: 30px; font-size: 14px; color: #d81b60; font-style: italic; z-index: 2; position: relative; text-align: center; font-weight: bold; }
+        .app-container.exporting .add-btn, .app-container.exporting .remove-btn { display: none !important; }
+        .app-container.exporting th:last-child, .app-container.exporting td:last-child { display: none !important; }
+        .app-container.exporting table { border: 1px solid #d81b60; margin-top: 20px; margin-bottom: 20px; }
+        .app-container.exporting th { background-color: #fce4ec !important; color: #d81b60 !important; border: 1px solid #d81b60; }
+        .app-container.exporting td { border: 1px solid #f8bbd0; height: 30px; }
+        .app-container.exporting .summary-box { background: transparent !important; border: 1.5px solid #d81b60; }
+        .app-container.exporting .header { border-bottom: 2px solid #d81b60; }
+        .app-container.exporting .total-row { border-top: 2px solid #d81b60 !important; }
+
+        .controls-container { max-width: 600px; margin: 20px auto 0 auto; padding: 0 10px; }
+        .print-btn { display: block; width: 100%; padding: 14px; background-color: #d81b60; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(216,27,96,0.2); }
+        .print-btn:active { transform: scale(0.98); }
+        #loadingMsg { display: none; text-align: center; color: #d81b60; font-weight: bold; margin-top: 15px; font-size: 14px; }
+        
+        .temp-text { flex: 1; min-width: 0; font-size: 14px; color: #000; padding: 0 10px; box-sizing: border-box; overflow-wrap: break-word; }
+
+        /* iPhone အတွက် ရလဒ်ပြမည့် စာမျက်နှာ */
+        #resultView { display: none; padding: 15px; max-width: 600px; margin: auto; min-height: 100vh; background-color: #fce4ec; }
+        .result-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        .result-card p { color: #d81b60; font-weight: bold; font-size: 15px; margin-top: 0; line-height: 1.6; }
+        .result-card img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .back-btn { background: #555; color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div id="mainView">
+    <div class="app-container" id="invoiceCard">
+        <div class="floral-bg"></div>
+        <div class="watermark">❤ Dressup By May ❤</div>
+
+        <div class="header">
+            <h1>✿ Dressup By May ✿</h1>
+            <p>Fashion & Clothing Store</p>
+            <p class="shop-address">
+                No.428(A), Thuta Street, (4) Ward, South Okkalapa Township, Yangon, Myanmar, <strong>Tel: +95 9 509 5013</strong>
+            </p>
+        </div>
+
+        <div class="input-group">
+            <label>ဝယ်သူအမည်</label>
+            <input type="text" placeholder="အမည် ထည့်ပါ" autocomplete="off" spellcheck="false" onfocus="this.select()">
+        </div>
+        <div class="input-group">
+            <label>ဖုန်းနံပါတ်</label>
+            <input type="text" placeholder="09..." autocomplete="off" onfocus="this.select()">
+        </div>
+        <div class="input-group">
+            <label>ရက်စွဲ/လိပ်စာ</label>
+            <input type="text" placeholder="ပို့ရမည့် လိပ်စာ သို့မဟုတ် ရက်စွဲ" autocomplete="off" spellcheck="false" onfocus="this.select()">
+        </div>
+
+        <table id="invoiceTable">
+            <thead>
+                <tr>
+                    <th>ပစ္စည်းအမည်</th>
+                    <th style="width: 40px; text-align: center;">ခု</th>
+                    <th style="width: 80px; text-align: right;">စျေးနှုန်း</th>
+                    <th style="width: 30px;"></th>
+                </tr>
+            </thead>
+            <tbody id="itemsContainer">
+                <tr>
+                    <td><input type="text" placeholder="ဥပမာ-Floral Dress" autocomplete="off" spellcheck="false" onfocus="this.select()"></td>
+                    <td><input type="number" class="qty" value="1" min="1" oninput="calculateTotal()" style="text-align: center;" autocomplete="off" onfocus="this.select()"></td>
+                    <td><input type="number" class="price" placeholder="0" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off" onfocus="this.select()"></td>
+                    <td><button type="button" class="remove-btn" onclick="removeItem(this)">X</button></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <button type="button" class="add-btn" onclick="addItem()">+ ပစ္စည်းအသစ် ထပ်ထည့်ရန်</button>
+
+        <div class="summary-box">
+            <div class="summary-row">
+                <span>ပစ္စည်းဖိုး:</span>
+                <span><span id="subTotal">0</span> Ks</span>
+            </div>
+            <div class="summary-row">
+                <span>ပို့ဆောင်ခ:</span>
+                <input type="number" id="deliFee" placeholder="0" min="0" oninput="calculateTotal()" style="width: 80px;" autocomplete="off" onfocus="this.select()">
+            </div>
+            <div class="total-row">
+                <span>စုစုပေါင်း:</span>
+                <span><span id="finalTotal">0</span> Ks</span>
+            </div>
+        </div>
+
+        <div class="thank-you">
+            ~ ဝယ်ယူအားပေးမှုအတွက် ကျေးဇူးအထူးတင်ရှိပါသည်။ ~
+        </div>
+    </div>
+
+    <div class="controls-container">
+        <button type="button" class="print-btn" id="saveBtn" onclick="saveAsImage()">ဘောက်ချာ ထုတ်မည်</button>
+        <div id="loadingMsg">ဓာတ်ပုံဖန်တီးနေပါသည်... ခေတ္တစောင့်ပါ...</div>
+    </div>
+</div>
+
+<div id="resultView">
+    <div class="result-card">
+        <p>👇 အောက်ပါပုံကို ဖိထားပြီး (Long Press)<br><b>"Save Image"</b> (သို့) <b>"Add to Photos"</b> ကို နှိပ်ပါ</p>
+        <img id="generatedImg" src="" alt="Invoice Image">
+        <button type="button" class="back-btn" onclick="goBack()">« နောက်သို့ ပြန်သွားမည်</button>
+    </div>
+</div>
+
+<script>
+    function calculateTotal() {
+        let subTotal = 0;
+        let rows = document.querySelectorAll('#itemsContainer tr');
+        
+        rows.forEach(row => {
+            let qty = row.querySelector('.qty').value || 0;
+            let price = row.querySelector('.price').value || 0;
+            subTotal += (qty * price);
+        });
+        
+        let deliFee = parseInt(document.getElementById('deliFee').value || 0);
+        let finalTotal = subTotal + deliFee;
+        
+        document.getElementById('subTotal').innerText = subTotal.toLocaleString();
+        document.getElementById('finalTotal').innerText = finalTotal.toLocaleString();
+    }
+
+    function addItem() {
+        let tbody = document.getElementById('itemsContainer');
+        let newRow = document.createElement('tr');
+        
+        newRow.innerHTML = `
+            <td><input type="text" placeholder="ပစ္စည်းအမည် ထည့်ပါ" autocomplete="off" spellcheck="false" onfocus="this.select()"></td>
+            <td><input type="number" class="qty" value="1" min="1" oninput="calculateTotal()" style="text-align: center;" autocomplete="off" onfocus="this.select()"></td>
+            <td><input type="number" class="price" placeholder="0" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off" onfocus="this.select()"></td>
+            <td><button type="button" class="remove-btn" onclick="removeItem(this)">X</button></td>
+        `;
+        
+        tbody.appendChild(newRow);
+        calculateTotal();
+    }
+
+    function removeItem(btn) {
+        let row = btn.closest('tr');
+        row.remove();
+        calculateTotal();
+    }
+
+    function goBack() {
+        document.getElementById('resultView').style.display = 'none';
+        document.getElementById('mainView').style.display = 'block';
+        window.scrollTo(0, 0); 
+    }
+
+    function saveAsImage() {
+        let container = document.getElementById('invoiceCard');
+        let saveBtn = document.getElementById('saveBtn');
+        let loadingMsg = document.getElementById('loadingMsg');
+
+        saveBtn.style.display = 'none';
+        loadingMsg.style.display = 'block';
+        container.classList.add('exporting');
+
+        let inputs = container.querySelectorAll('input');
+        inputs.forEach(input => {
+            let span = document.createElement('span');
+            span.className = 'temp-text';
+            span.innerText = input.value || ' '; 
+            
+            if(input.classList.contains('qty') || input.style.textAlign === 'center') span.style.textAlign = 'center';
+            if(input.classList.contains('price') || input.style.textAlign === 'right') span.style.textAlign = 'right';
+            if(input.id === 'deliFee') span.style.textAlign = 'right';
+
+            input.parentNode.insertBefore(span, input);
+            input.style.display = 'none';
+        });
+
+        setTimeout(() => {
+            // iPhone Memory ပြဿနာမဖြစ်စေရန် JPEG (Quality 0.95) ဖြင့် ပြောင်းလဲထုတ်ပေးခြင်း
+            html2canvas(container, { scale: 2, useCORS: true, backgroundColor: "#ffffff" }).then(canvas => {
+                
+                let tempTexts = container.querySelectorAll('.temp-text');
+                tempTexts.forEach(span => span.remove());
+                inputs.forEach(input => input.style.display = '');
+
+                container.classList.remove('exporting');
+                saveBtn.style.display = 'block';
+                loadingMsg.style.display = 'none';
+
+                // JPEG Format ပြောင်းခြင်း (PNG ထက် ဖိုင်ဆိုဒ် အများကြီး ပိုသေးသွားပါမည်)
+                let imgData = canvas.toDataURL('image/jpeg', 0.95);
+                
+                document.getElementById('generatedImg').src = imgData;
+                document.getElementById('mainView').style.display = 'none';
+                document.getElementById('resultView').style.display = 'block';
+                
+                window.scrollTo(0, 0); 
+                
+            }).catch(err => {
+                alert("ပုံထုတ်ရာတွင် အခက်အခဲရှိနေပါသည်။ ကျေးဇူးပြု၍ ပြန်လည်ကြိုးစားကြည့်ပါ။");
+                saveBtn.style.display = 'block';
+                loadingMsg.style.display = 'none';
+                container.classList.remove('exporting');
+            });
+        }, 500); 
+    }
+</script>
+
+</body>
+</html>
