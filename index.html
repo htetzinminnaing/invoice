@@ -207,8 +207,7 @@
             Total Sales: <span id="historyTotalAmount">0</span> Ks
         </div>
 
-        <div id="historyList">
-            </div>
+        <div id="historyList"></div>
         
         <p style="text-align:center; font-size: 11px; color:#888; margin-top: 20px;">* Data is securely saved in your Google Sheet.</p>
     </div>
@@ -218,7 +217,6 @@
     // --- Google App Script API Link ---
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLgvYEDVw0mgftIaF0DgzCQapiMTPVuE_5eTCxRknJHE0_h-xJO5Zz1zwOu_DTY-KP/exec";
 
-    // --- Invoice Logic ---
     function calculateTotal() {
         let subTotal = 0;
         let rows = document.querySelectorAll('#itemsContainer tr');
@@ -254,7 +252,7 @@
         calculateTotal();
     }
 
-    // --- Save Data Online (Google Sheets) ---
+    // --- Save Data Online ---
     function saveRecordToOnline() {
         let totalAmount = calculateTotal();
         if(totalAmount === 0) return; 
@@ -289,7 +287,7 @@
           .catch(err => console.error('Error saving data:', err));
     }
 
-    // --- History View Logic (Online) ---
+    // --- History View Logic ---
     function openHistory() {
         document.getElementById('mainView').style.display = 'none';
         document.getElementById('historyView').style.display = 'block';
@@ -314,23 +312,37 @@
         listContainer.innerHTML = '<div class="loading-text">Loading data from Database... ⏳</div>';
         totalAmountEl.innerText = "0";
 
-        // အရေးကြီးဆုံး ပြင်ဆင်ချက်: နောက်ကနေ အချိန် (Timestamp) ထည့်ပေးလိုက်ခြင်းဖြင့် Browser ကို Cache အဟောင်း မမှတ်စေရန် တားဆီးသည်
         let noCacheUrl = SCRIPT_URL + "?t=" + new Date().getTime();
 
-        // Google Sheet မှ Data များကို ဆွဲယူခြင်း
         fetch(noCacheUrl, { cache: 'no-store' })
             .then(res => res.json())
             .then(history => {
+                
+                // Google မှ ပြန်လာသော မည်သည့်ရက်စွဲပုံစံကိုမဆို ဖုန်းစံတော်ချိန် YYYY-MM-DD သို့ အတိအကျပြောင်းပေးမည့် စနစ်အသစ်
+                const getFormattedDate = (rawDate) => {
+                    if (!rawDate) return "";
+                    let d = new Date(rawDate);
+                    // Date အနေဖြင့် ပြောင်း၍ရပါက (Valid Date ဖြစ်ပါက)
+                    if (!isNaN(d.getTime())) {
+                        let yyyy = d.getFullYear();
+                        let mm = String(d.getMonth() + 1).padStart(2, '0');
+                        let dd = String(d.getDate()).padStart(2, '0');
+                        return `${yyyy}-${mm}-${dd}`;
+                    }
+                    // ပြောင်းမရပါက နဂိုအတိုင်းထားမည်
+                    return String(rawDate);
+                };
+
                 let filteredRecords = [];
                 
                 if (filterType === 'date') {
                     let selectedDate = document.getElementById('filterDate').value;
                     document.getElementById('filterMonth').value = ''; 
-                    filteredRecords = history.filter(r => r.date && r.date.includes(selectedDate));
+                    filteredRecords = history.filter(r => getFormattedDate(r.date) === selectedDate);
                 } else if (filterType === 'month') {
                     let selectedMonth = document.getElementById('filterMonth').value;
                     document.getElementById('filterDate').value = ''; 
-                    filteredRecords = history.filter(r => r.date && r.date.includes(selectedMonth));
+                    filteredRecords = history.filter(r => getFormattedDate(r.date).startsWith(selectedMonth));
                 } else {
                     document.getElementById('filterDate').value = '';
                     document.getElementById('filterMonth').value = '';
@@ -349,6 +361,8 @@
                         let amount = parseFloat(record.totalAmount) || 0;
                         calcTotal += amount;
                         
+                        let displayDate = getFormattedDate(record.date);
+                        
                         let itemDiv = document.createElement('div');
                         itemDiv.className = 'record-item';
                         itemDiv.innerHTML = `
@@ -357,7 +371,7 @@
                                 <span class="record-amount">${amount.toLocaleString()} Ks</span>
                             </div>
                             <div class="record-detail">
-                                <span>📅 ${record.date} (${record.time})<br>🛍️ ${record.items}</span>
+                                <span>📅 ${displayDate} (${record.time})<br>🛍️ ${record.items}</span>
                                 <button class="delete-record-btn" onclick="deleteSingleRecord(${record.row})">❌ Delete</button>
                             </div>
                         `;
@@ -396,7 +410,6 @@
         }
     }
 
-    // --- Data Reset & Go Back Logic ---
     function goBackToMain() {
         document.getElementById('resultView').style.display = 'none';
         document.getElementById('mainView').style.display = 'block';
@@ -420,7 +433,6 @@
         window.scrollTo(0, 0); 
     }
 
-    // --- Image Generation Logic ---
     function saveAsImage() {
         window.scrollTo(0, 0);
         
