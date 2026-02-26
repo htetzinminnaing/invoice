@@ -268,14 +268,12 @@
         let itemsSummary = itemNames.length > 0 ? itemNames.join(', ') : 'Items';
 
         let now = new Date();
-        // လ/ရက် ဂဏန်းများကို 2 လုံးပြည့်အောင် ဖြည့်ပေးမည် (ဥပမာ 02, 09)
         let mm = String(now.getMonth() + 1).padStart(2, '0');
         let dd = String(now.getDate()).padStart(2, '0');
         
         let dateStr = now.getFullYear() + '-' + mm + '-' + dd;
         let timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
-        // POST Data ပြင်ဆင်ခြင်း
         let formData = new URLSearchParams();
         formData.append('action', 'insert');
         formData.append('date', dateStr);
@@ -284,7 +282,6 @@
         formData.append('items', itemsSummary);
         formData.append('totalAmount', totalAmount);
 
-        // Google Sheet သို့ လှမ်းပို့ခြင်း (Background တွင် အလုပ်လုပ်မည်)
         fetch(SCRIPT_URL, {
             method: 'POST',
             body: formData
@@ -314,12 +311,14 @@
         let listContainer = document.getElementById('historyList');
         let totalAmountEl = document.getElementById('historyTotalAmount');
         
-        // Data ဆွဲယူနေစဉ် Loading ပြပေးမည်
         listContainer.innerHTML = '<div class="loading-text">Loading data from Database... ⏳</div>';
         totalAmountEl.innerText = "0";
 
+        // အရေးကြီးဆုံး ပြင်ဆင်ချက်: နောက်ကနေ အချိန် (Timestamp) ထည့်ပေးလိုက်ခြင်းဖြင့် Browser ကို Cache အဟောင်း မမှတ်စေရန် တားဆီးသည်
+        let noCacheUrl = SCRIPT_URL + "?t=" + new Date().getTime();
+
         // Google Sheet မှ Data များကို ဆွဲယူခြင်း
-        fetch(SCRIPT_URL)
+        fetch(noCacheUrl, { cache: 'no-store' })
             .then(res => res.json())
             .then(history => {
                 let filteredRecords = [];
@@ -327,20 +326,17 @@
                 if (filterType === 'date') {
                     let selectedDate = document.getElementById('filterDate').value;
                     document.getElementById('filterMonth').value = ''; 
-                    // Date ပါဝင်မှုဖြင့် ရှာဖွေမည်
-                    filteredRecords = history.filter(r => r.date.includes(selectedDate));
+                    filteredRecords = history.filter(r => r.date && r.date.includes(selectedDate));
                 } else if (filterType === 'month') {
                     let selectedMonth = document.getElementById('filterMonth').value;
                     document.getElementById('filterDate').value = ''; 
-                    // YYYY-MM ပါဝင်မှုဖြင့် ရှာဖွေမည်
-                    filteredRecords = history.filter(r => r.date.includes(selectedMonth));
+                    filteredRecords = history.filter(r => r.date && r.date.includes(selectedMonth));
                 } else {
                     document.getElementById('filterDate').value = '';
                     document.getElementById('filterMonth').value = '';
                     filteredRecords = history;
                 }
 
-                // အသစ်ဆုံးကို အပေါ်မှာထားရန် ပြောင်းပြန်လှန်မည်
                 filteredRecords.reverse(); 
 
                 listContainer.innerHTML = '';
@@ -391,7 +387,6 @@
             })
             .then(res => res.text())
             .then(text => {
-                // ဖျက်ပြီးပါက ရှိရင်းစွဲ Filter အတိုင်း ပြန်လည် Refresh လုပ်မည်
                 let currentFilter = 'all';
                 if (document.getElementById('filterDate').value) currentFilter = 'date';
                 else if (document.getElementById('filterMonth').value) currentFilter = 'month';
@@ -429,7 +424,6 @@
     function saveAsImage() {
         window.scrollTo(0, 0);
         
-        // ဘောက်ချာထုတ်ချိန်တွင် Google Sheet သို့ အလိုအလျောက် သိမ်းမည်
         saveRecordToOnline();
 
         let container = document.getElementById('invoiceCard');
