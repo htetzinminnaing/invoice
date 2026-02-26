@@ -7,6 +7,12 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     
+    <link rel="apple-touch-icon" href="logo.jpg">
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dressup By May">
+    
     <title>Dressup By May - Invoice & Sales</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
@@ -318,18 +324,15 @@
             .then(res => res.json())
             .then(history => {
                 
-                // Google မှ ပြန်လာသော မည်သည့်ရက်စွဲပုံစံကိုမဆို ဖုန်းစံတော်ချိန် YYYY-MM-DD သို့ အတိအကျပြောင်းပေးမည့် စနစ်အသစ်
                 const getFormattedDate = (rawDate) => {
                     if (!rawDate) return "";
                     let d = new Date(rawDate);
-                    // Date အနေဖြင့် ပြောင်း၍ရပါက (Valid Date ဖြစ်ပါက)
                     if (!isNaN(d.getTime())) {
                         let yyyy = d.getFullYear();
                         let mm = String(d.getMonth() + 1).padStart(2, '0');
                         let dd = String(d.getDate()).padStart(2, '0');
                         return `${yyyy}-${mm}-${dd}`;
                     }
-                    // ပြောင်းမရပါက နဂိုအတိုင်းထားမည်
                     return String(rawDate);
                 };
 
