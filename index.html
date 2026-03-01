@@ -43,9 +43,10 @@
         .input-group input:focus { border-color: #d81b60; outline: none; background-color: #fff; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 10px; z-index: 2; position: relative; }
-        th { background-color: #fce4ec; color: #d81b60; padding: 10px 4px; text-align: left; font-size: 13px; border-radius: 4px 4px 0 0; white-space: nowrap; border: 1px solid #d81b60; }
+        /* မျဉ်းနှင့်မကပ်စေရန် padding အနည်းငယ် တိုးထားပါသည် */
+        th { background-color: #fce4ec; color: #d81b60; padding: 10px 8px; text-align: left; font-size: 13px; border-radius: 4px 4px 0 0; white-space: nowrap; border: 1px solid #d81b60; }
         td { padding: 4px 2px; border-bottom: 1px solid #eee; border: 1px solid #f8bbd0; }
-        td input { width: 100%; padding: 10px 4px; border: none; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: transparent; }
+        td input { width: 100%; padding: 10px 8px; border: none; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: transparent; }
         td input:focus { outline: none; }
         
         .remove-btn { background: #ff5252; color: white; border: none; border-radius: 4px; padding: 8px 10px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; }
@@ -162,7 +163,7 @@
 
 <script>
     // --- Auto Update Version ---
-    const APP_VERSION = "1.0.8"; 
+    const APP_VERSION = "1.0.9"; 
     function checkAppUpdate() {
         const storedVersion = localStorage.getItem('dressup_app_version');
         if (storedVersion !== APP_VERSION) { localStorage.setItem('dressup_app_version', APP_VERSION); window.location.reload(true); }
@@ -322,7 +323,6 @@
             filtered.reverse().forEach(record => {
                 calcTotal += parseFloat(record.totalAmount) || 0;
                 
-                // Note ပါ/မပါ စစ်ဆေးပြီး အောက်တစ်ကြောင်းဆင်းရန် ပြင်ဆင်ခြင်း
                 let custNameDisplay = record.customer;
                 let noteDisplay = "";
                 if (custNameDisplay.includes(" (Note: ")) {
@@ -347,7 +347,6 @@
                 let itemDiv = document.createElement('div');
                 itemDiv.className = 'record-item';
                 
-                // Note ပါရင် အောက်ဆင်းပြရန် HTML တည်ဆောက်ခြင်း
                 let headerHtml = `<div class="record-item-header" style="margin-bottom: ${noteDisplay ? '4px' : '10px'};">
                     <span class="cust-name">👤 ${custNameDisplay}</span>
                     <span class="amt">${parseInt(record.totalAmount).toLocaleString()} Ks</span>
@@ -376,7 +375,6 @@
 
     function goBackToMain() { location.reload(true); }
 
-    // --- Fixed Screenshot Formatting for Delivery Fee Color & Alignment ---
     function saveAsImage() {
         saveRecordToOnline();
         let container = document.getElementById('invoiceCard');
@@ -390,22 +388,29 @@
             let val = input.value || ' ';
             
             if (input.id === 'deliFee') {
-                // Delivery Fee ကို Subtotal လိုမျိုး အတိအကျဖြစ်အောင် ပြင်ဆင်ခြင်း
                 let deliVal = parseInt(val) || 0;
                 span.innerText = deliVal === 0 ? '0 Ks' : deliVal.toLocaleString() + ' Ks';
-                // temp-text class ကို မသုံးဘဲ parent ၏ အတိုင်းသာထားပါသည်
+                span.style.color = '#555';
+                span.style.fontWeight = 'bold';
+                span.style.display = 'inline-block';
+                span.style.textAlign = 'right';
             } else if (input.classList.contains('qty')) { 
                 span.className = 'temp-text';
                 span.innerText = val; 
                 span.style.textAlign = 'center'; 
+                span.style.display = 'block';
             } else if (input.classList.contains('price')) { 
                 span.className = 'temp-text';
                 span.innerText = (val === ' ' || isNaN(parseInt(val))) ? '0' : parseInt(val).toLocaleString(); 
                 span.style.textAlign = 'right'; 
+                span.style.display = 'block';
             } else { 
                 span.className = 'temp-text';
                 span.innerText = val; 
                 span.style.textAlign = 'left'; 
+                span.style.display = 'block';
+                // Item Name များကို ဘယ်ဘက်မျဉ်းနှင့် မကပ်စေရန် Padding အနည်းငယ် ထည့်ပေးထားပါသည်
+                span.style.paddingLeft = '8px'; 
             }
             
             input.parentNode.insertBefore(span, input);
