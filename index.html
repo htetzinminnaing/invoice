@@ -4,259 +4,350 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     
     <link rel="apple-touch-icon" href="logo.jpg">
-    <link rel="icon" href="logo.jpg">
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Dressup By May">
     
-    <title>Dressup By May - Pro Invoice</title>
+    <title>Dressup By May - Invoice & Sales</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #fce4ec; margin: 0; padding: 10px; color: #333; }
-        .app-container { background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 600px; margin: auto; position: relative; overflow: hidden; }
+        /* Base Mobile Design */
+        body { font-family: Arial, sans-serif; background-color: #fce4ec; margin: 0; padding: 10px; color: #333; }
+        .app-container { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding-bottom: 25px; max-width: 600px; margin: auto; position: relative; overflow: hidden; }
         
-        /* Header */
-        .header { text-align: center; border-bottom: 2px solid #d81b60; padding-bottom: 12px; margin-bottom: 15px; }
-        .header img.shop-logo { width: 100%; max-width: 200px; height: auto; border-radius: 8px; margin-bottom: 8px; }
-        .header .shop-address { color: #555; font-size: 11px; line-height: 1.4; }
+        .watermark { display: none; }
         
-        .inv-meta { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; color: #d81b60; margin-bottom: 10px; border-bottom: 1px dashed #f8bbd0; padding-bottom: 5px; }
+        /* Top Navigation */
+        .top-nav { max-width: 600px; margin: 0 auto 10px auto; text-align: right; }
+        .report-btn { background: #d81b60; color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; box-shadow: 0 2px 5px rgba(216,27,96,0.2); }
+        
+        /* Header Logo Styling */
+        .header { text-align: center; border-bottom: 2px solid #d81b60; padding-bottom: 12px; margin-bottom: 5px; z-index: 2; position: relative; }
+        .header img.shop-logo { width: 100%; max-width: 250px; height: auto; border-radius: 8px; margin-bottom: 8px; }
+        .header .shop-address { color: #555; font-size: 11px; margin-top: 5px; line-height: 1.5; }
+        
+        /* Auto Date Display */
+        #displayCurrentDate { text-align: right; font-size: 12px; font-weight: bold; color: #d81b60; margin-bottom: 6px; padding-right: 2px; }
 
-        /* Inputs */
-        .input-group { display: flex; align-items: center; margin-bottom: 10px; }
-        .input-group label { width: 120px; font-weight: bold; color: #555; font-size: 13px; }
-        .input-group input, .input-group select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background-color: #fafafa; }
+        /* Form Inputs */
+        .input-group { display: flex; align-items: center; margin-bottom: 12px; z-index: 2; position: relative; }
+        .input-group label { width: 110px; min-width: 110px; font-weight: bold; color: #555; font-size: 13px; white-space: nowrap; flex-shrink: 0; }
+        .input-group input { flex: 1; min-width: 0; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background-color: #fafafa; box-sizing: border-box; }
         .input-group input:focus { border-color: #d81b60; outline: none; background-color: #fff; }
         
-        /* Table */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { background-color: #fce4ec; color: #d81b60; padding: 10px 4px; font-size: 13px; border: 1px solid #d81b60; }
-        td { padding: 4px 2px; border: 1px solid #f8bbd0; }
-        td input { width: 100%; padding: 10px 4px; border: none; font-size: 14px; background: transparent; }
+        /* Table Styling */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; z-index: 2; position: relative; }
+        th { background-color: #fce4ec; color: #d81b60; padding: 10px 4px; text-align: left; font-size: 13px; border-radius: 4px 4px 0 0; white-space: nowrap; border: 1px solid #d81b60; }
+        td { padding: 4px 2px; border-bottom: 1px solid #eee; border: 1px solid #f8bbd0; }
+        td input { width: 100%; padding: 10px 4px; border: none; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: transparent; }
+        td input:focus { outline: none; }
         
-        .add-btn { width: 100%; background: #fff; color: #d81b60; border: 2px dashed #d81b60; padding: 10px; border-radius: 6px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        /* Buttons */
+        .remove-btn { background: #ff5252; color: white; border: none; border-radius: 4px; padding: 8px 10px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; }
+        .add-btn { width: 100%; background-color: #fce4ec; color: #d81b60; border: 2px dashed #d81b60; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; z-index: 2; position: relative; }
         
-        /* Summary */
-        .summary-box { background: #fff0f4; padding: 12px; border-radius: 8px; margin-top: 15px; border: 1.5px solid #d81b60; }
-        .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 14px; }
-        .total-row { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; color: #d81b60; margin-top: 8px; padding-top: 8px; border-top: 2px solid #d81b60; }
+        /* Summary Box */
+        .summary-box { background: #fff0f4; padding: 12px; border-radius: 8px; margin-top: 15px; z-index: 2; position: relative; border: 1.5px solid #d81b60; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; color: #555; }
+        .summary-row span { white-space: nowrap; font-weight: bold; }
+        .summary-row input { width: 90px; padding: 8px; text-align: right; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-weight: bold; background: #fff; }
+        .total-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: bold; color: #d81b60; margin-top: 8px; padding-top: 8px; border-top: 2px solid #d81b60; }
+        .total-row span { white-space: nowrap; }
         
-        .thank-you { display: none; margin-top: 20px; font-size: 14px; color: #d81b60; font-style: italic; text-align: center; }
+        .thank-you { display: block; margin-top: 25px; font-size: 14px; color: #d81b60; font-style: italic; text-align: center; font-weight: bold; display: none; }
 
-        /* Report & History */
-        .top-nav { max-width: 600px; margin: 0 auto 10px auto; display: flex; gap: 10px; }
-        .nav-btn { flex: 1; background: #d81b60; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        
-        #historyView { display: none; max-width: 600px; margin: auto; background: #fff; border-radius: 12px; padding: 15px; min-height: 90vh; }
-        .search-box { width: 100%; padding: 12px; border: 2px solid #f8bbd0; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; font-size: 15px; }
-        
-        .record-card { background: #fffafb; border: 1px solid #f8bbd0; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
-        .item-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px solid #fce4ec; }
-        
-        /* Export Mode */
+        /* Export Mode CSS */
+        .app-container.exporting { box-shadow: none; padding: 20px; border: 2px solid #d81b60; border-radius: 15px; background: #fff; }
+        .app-container.exporting .watermark { display: flex; justify-content: center; align-items: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; opacity: 0.12; }
+        .app-container.exporting .watermark img { width: 80%; max-width: 400px; height: auto; }
         .app-container.exporting .add-btn, .app-container.exporting .remove-btn { display: none !important; }
+        .app-container.exporting th:last-child, .app-container.exporting td:last-child { display: none !important; }
+        .app-container.exporting .summary-row input { border: none; background: transparent; padding: 0; }
+        .app-container.exporting .header { border-bottom: 2px solid #d81b60; }
+        .app-container.exporting .total-row { border-top: 2px solid #d81b60 !important; }
         .app-container.exporting .thank-you { display: block; }
-        .app-container.exporting { border: 2px solid #d81b60; }
+
+        .controls-container { max-width: 600px; margin: 20px auto 0 auto; padding: 0 10px; }
+        .print-btn { display: block; width: 100%; padding: 14px; background-color: #d81b60; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(216,27,96,0.2); }
+        .print-btn:active { transform: scale(0.98); }
+        #loadingMsg { display: none; text-align: center; color: #d81b60; font-weight: bold; margin-top: 15px; font-size: 14px; }
         
-        #generatedImg { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .temp-text { flex: 1; min-width: 0; font-size: 14px; color: #000; padding: 0 10px; box-sizing: border-box; overflow-wrap: break-word; }
+
+        /* Image Result View */
+        #resultView { display: none; padding: 15px; max-width: 600px; margin: auto; min-height: 100vh; background-color: #fce4ec; }
+        .result-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        .result-card img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .back-btn { background: #555; color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+
+        /* Sales History View (Online) */
+        #historyView { display: none; padding: 10px; max-width: 600px; margin: auto; min-height: 100vh; background-color: #fce4ec; }
+        .history-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .history-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f8bbd0; padding-bottom: 10px; margin-bottom: 15px; }
+        .history-header h2 { color: #d81b60; margin: 0; font-size: 20px; }
+        .close-history { background: #555; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        
+        .filter-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .filter-group input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        .filter-group button { background: #d81b60; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        
+        .total-sales-badge { background: #fff0f4; border: 1px dashed #d81b60; padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; color: #d81b60; margin-bottom: 15px; }
+        
+        /* New Cleaner Record Item Design (with price align right) */
+        .record-item { background: #fffafb; border: 1px solid #f8bbd0; border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .record-item:last-child { margin-bottom: 0; }
+        .record-item-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #f8bbd0; padding-bottom: 8px; margin-bottom: 10px; }
+        .record-item-header .cust-name { font-weight: bold; font-size: 15px; color: #d81b60; }
+        .record-item-header .amt { font-weight: bold; font-size: 15px; color: #333; }
+        
+        .record-items-container { display: flex; flex-direction: column; gap: 6px; }
+        .item-tag { background: #fff; border: 1px solid #fce4ec; padding: 8px 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .item-tag-name { font-size: 13px; color: #444; font-weight: 500; }
+        .item-tag-name::before { content: "🛍️"; margin-right: 6px; }
+        .item-tag-price { color: #d81b60; font-weight: bold; font-size: 13px; }
+        
+        .record-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+        .record-date-badge { font-size: 11px; color: #666; font-weight: bold; background: #eee; padding: 4px 8px; border-radius: 4px; }
+        .delete-record-btn { background: #ff5252; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        
+        .loading-text { text-align: center; color: #d81b60; font-weight: bold; font-size: 14px; padding: 20px; }
     </style>
 </head>
 <body>
 
 <div id="mainView">
     <div class="top-nav">
-        <button class="nav-btn" onclick="openHistory()">📊 Sales Report / Search</button>
+        <button class="report-btn" onclick="openHistory()">📊 Online Sales Report</button>
     </div>
 
     <div class="app-container" id="invoiceCard">
+        <div class="watermark">
+            <img src="logo.jpg" alt="Watermark Logo">
+        </div>
+
         <div class="header">
-            <img src="logo.jpg" alt="Logo" class="shop-logo">
-            <p class="shop-address">No.428(A), Thuta Street, South Okkalapa, Yangon. <strong>Tel: +95 9 509 5013</strong></p>
+            <img src="logo.jpg" alt="Dressup By May Logo" class="shop-logo">
+            <p class="shop-address">
+                No.428(A), Thuta Street, (4) Ward, South Okkalapa Township, Yangon, Myanmar. <strong>Tel: +95 9 509 5013</strong>
+            </p>
         </div>
 
-        <div class="inv-meta">
-            <span id="displayInvId">ID: INV-LOADING</span>
-            <span id="displayDate">Date: 01-Jan-2026</span>
-        </div>
+        <div id="displayCurrentDate">Date: </div>
 
         <div class="input-group">
-            <label>Customer</label>
-            <input type="text" id="custName" placeholder="Name" onfocus="this.select()">
+            <label>Customer Name</label>
+            <input type="text" id="custName" placeholder="Enter name" autocomplete="off" spellcheck="false" onfocus="this.select()">
         </div>
         <div class="input-group">
-            <label>Phone</label>
-            <input type="text" id="phone" placeholder="09..." onfocus="this.select()">
+            <label>Phone Number</label>
+            <input type="text" id="phone" placeholder="09..." autocomplete="off" onfocus="this.select()">
         </div>
         <div class="input-group">
             <label>Address</label>
-            <input type="text" id="address" placeholder="Address" onfocus="this.select()">
+            <input type="text" id="address" placeholder="Delivery address" autocomplete="off" spellcheck="false" onfocus="this.select()">
         </div>
         <div class="input-group">
             <label>Note</label>
-            <input type="text" id="note" placeholder="Remark" onfocus="this.select()">
-        </div>
-        <div class="input-group">
-            <label>Payment</label>
-            <select id="paymentMethod">
-                <option value="KPay">KPay</option>
-                <option value="WavePay">WavePay</option>
-                <option value="AYA Pay">AYA Pay</option>
-                <option value="COD">COD (Cash on Delivery)</option>
-            </select>
+            <input type="text" id="note" placeholder="Remarks / Notes (Optional)" autocomplete="off" spellcheck="false" onfocus="this.select()">
         </div>
 
-        <table>
+        <table id="invoiceTable">
             <thead>
                 <tr>
                     <th>Item Name</th>
-                    <th style="width: 40px;">Qty</th>
-                    <th style="width: 80px;">Price</th>
+                    <th style="width: 40px; text-align: center;">Qty</th>
+                    <th style="width: 80px; text-align: right;">Price</th>
                     <th style="width: 30px;"></th>
                 </tr>
             </thead>
             <tbody id="itemsContainer">
                 <tr>
-                    <td><input type="text" class="itemName" placeholder="Zara"></td>
-                    <td><input type="number" class="qty" value="1" oninput="calculateTotal()"></td>
-                    <td><input type="number" class="price" value="0" oninput="calculateTotal()"></td>
-                    <td><button onclick="this.closest('tr').remove(); calculateTotal()" style="background:red; color:white; border:none; border-radius:4px;">X</button></td>
+                    <td><input type="text" class="itemName" placeholder="e.g. Floral Dress" autocomplete="off" spellcheck="false" onfocus="this.select()"></td>
+                    <td><input type="number" class="qty" value="1" min="1" oninput="calculateTotal()" style="text-align: center;" autocomplete="off" onfocus="this.select()"></td>
+                    <td><input type="number" class="price" placeholder="0" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off" onfocus="this.select()"></td>
+                    <td><button type="button" class="remove-btn" onclick="removeItem(this)">X</button></td>
                 </tr>
             </tbody>
         </table>
         
-        <button class="add-btn" onclick="addItem()">+ Add Item</button>
+        <button type="button" class="add-btn" onclick="addItem()">+ Add Item</button>
 
         <div class="summary-box">
-            <div class="summary-row"><span>Subtotal:</span><span id="subTotal">0</span> Ks</div>
-            <div class="summary-row"><span>Delivery:</span><input type="number" id="deliFee" value="0" oninput="calculateTotal()" style="width:80px; text-align:right;"></div>
-            <div class="summary-row" style="color: #d81b60; font-weight:bold;"><span>Discount:</span><input type="number" id="discount" value="0" oninput="calculateTotal()" style="width:80px; text-align:right; color:#d81b60; font-weight:bold;"></div>
-            <div class="total-row"><span>Total:</span><span id="finalTotal">0</span> Ks</div>
+            <div class="summary-row">
+                <span>Subtotal:</span>
+                <span><span id="subTotal">0</span> Ks</span>
+            </div>
+            <div class="summary-row">
+                <span>Delivery Fee:</span>
+                <input type="number" id="deliFee" placeholder="0" min="0" oninput="calculateTotal()" style="width: 80px;" autocomplete="off" onfocus="this.select()">
+            </div>
+            <div class="total-row">
+                <span>Total:</span>
+                <span><span id="finalTotal">0</span> Ks</span>
+            </div>
         </div>
 
-        <div class="thank-you">~ Thank You For Shopping With May ~</div>
+        <div class="thank-you">
+            ~ Thank You For Shopping With May ~
+        </div>
     </div>
 
-    <div style="margin-top: 20px;">
-        <button class="nav-btn" style="width:100%; padding:15px; font-size:16px;" id="saveBtn" onclick="saveAsImage()">Save & Print Invoice</button>
-        <p id="loadMsg" style="display:none; text-align:center; color:#d81b60; font-weight:bold;">Processing... Please wait...</p>
+    <div class="controls-container">
+        <button type="button" class="print-btn" id="saveBtn" onclick="saveAsImage()">Save Invoice</button>
+        <div id="loadingMsg">Generating image... Please wait...</div>
+    </div>
+</div>
+
+<div id="resultView">
+    <div class="result-card">
+        <img id="generatedImg" src="" alt="Invoice Image">
+        <br><br>
+        <button type="button" class="back-btn" onclick="goBackToMain()">« Go Back & Start New</button>
     </div>
 </div>
 
 <div id="historyView">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-        <h2 style="color:#d81b60; margin:0;">Sales Search</h2>
-        <button onclick="closeHistory()" style="padding:8px 15px; border-radius:6px; border:none; background:#555; color:white;">Back</button>
-    </div>
-    
-    <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search by Customer Name..." oninput="filterHistory()">
-    
-    <div id="historyList">Loading sales data...</div>
-</div>
+    <div class="history-card">
+        <div class="history-header">
+            <h2>Online Sales Report</h2>
+            <button class="close-history" onclick="closeHistory()">Close</button>
+        </div>
+        
+        <div class="filter-group">
+            <input type="date" id="filterDate" onchange="loadHistory('date')">
+            <input type="month" id="filterMonth" onchange="loadHistory('month')">
+        </div>
+        <div style="text-align: center; margin-bottom: 15px;">
+            <button onclick="loadHistory('all')" style="background: #888; color:white; border:none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Show All Time</button>
+        </div>
 
-<div id="resultView" style="display:none; text-align:center; padding:20px;">
-    <img id="generatedImg" src="">
-    <button class="nav-btn" style="width:100%; margin-top:20px; background:#555;" onclick="goBackMain()">« Create New Invoice</button>
+        <div class="total-sales-badge">
+            Total Sales: <span id="historyTotalAmount">0</span> Ks
+        </div>
+
+        <div id="historyList"></div>
+        
+        <p style="text-align:center; font-size: 11px; color:#888; margin-top: 20px;">* Data is securely saved in your Google Sheet.</p>
+    </div>
 </div>
 
 <script>
+    // --- Google App Script API Link ---
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLgvYEDVw0mgftIaF0DgzCQapiMTPVuE_5eTCxRknJHE0_h-xJO5Zz1zwOu_DTY-KP/exec";
-    let allRecords = [];
 
-    // Auto Invoice ID Generator
-    function generateInvId() {
+    function setCurrentDate() {
         let now = new Date();
-        let datePart = now.getFullYear().toString().slice(-2) + 
-                       (now.getMonth()+1).toString().padStart(2,'0') + 
-                       now.getDate().toString().padStart(2,'0');
-        let randomPart = Math.floor(100 + Math.random() * 900);
-        return "INV-" + datePart + "-" + randomPart;
+        let options = { day: '2-digit', month: 'short', year: 'numeric' };
+        document.getElementById('displayCurrentDate').innerText = "Date: " + now.toLocaleDateString('en-GB', options);
     }
-
-    function init() {
-        document.getElementById('displayInvId').innerText = "ID: " + generateInvId();
-        let now = new Date();
-        document.getElementById('displayDate').innerText = "Date: " + now.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
-    }
-    window.onload = init;
+    
+    window.onload = function() {
+        setCurrentDate();
+    };
 
     function calculateTotal() {
-        let sub = 0;
-        document.querySelectorAll('#itemsContainer tr').forEach(row => {
-            let q = row.querySelector('.qty').value || 0;
-            let p = row.querySelector('.price').value || 0;
-            sub += (q * p);
+        let subTotal = 0;
+        let rows = document.querySelectorAll('#itemsContainer tr');
+        rows.forEach(row => {
+            let qty = row.querySelector('.qty').value || 0;
+            let price = row.querySelector('.price').value || 0;
+            subTotal += (qty * price);
         });
-        let deli = parseInt(document.getElementById('deliFee').value || 0);
-        let disc = parseInt(document.getElementById('discount').value || 0);
-        let final = sub + deli - disc;
         
-        document.getElementById('subTotal').innerText = sub.toLocaleString();
-        document.getElementById('finalTotal').innerText = final.toLocaleString();
-        return final;
+        let deliFee = parseInt(document.getElementById('deliFee').value || 0);
+        let finalTotal = subTotal + deliFee;
+        
+        document.getElementById('subTotal').innerText = subTotal.toLocaleString();
+        document.getElementById('finalTotal').innerText = finalTotal.toLocaleString();
+        return finalTotal; 
     }
 
     function addItem() {
-        let tr = document.createElement('tr');
-        tr.innerHTML = `<td><input type="text" class="itemName" placeholder="Item"></td>
-                        <td><input type="number" class="qty" value="1" oninput="calculateTotal()"></td>
-                        <td><input type="number" class="price" value="0" oninput="calculateTotal()"></td>
-                        <td><button onclick="this.closest('tr').remove(); calculateTotal()" style="background:red; color:white; border:none; border-radius:4px;">X</button></td>`;
-        document.getElementById('itemsContainer').appendChild(tr);
+        let tbody = document.getElementById('itemsContainer');
+        let newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" class="itemName" placeholder="e.g. Floral Dress" autocomplete="off" spellcheck="false" onfocus="this.select()"></td>
+            <td><input type="number" class="qty" value="1" min="1" oninput="calculateTotal()" style="text-align: center;" autocomplete="off" onfocus="this.select()"></td>
+            <td><input type="number" class="price" placeholder="0" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off" onfocus="this.select()"></td>
+            <td><button type="button" class="remove-btn" onclick="removeItem(this)">X</button></td>
+        `;
+        tbody.appendChild(newRow);
+        calculateTotal();
     }
 
-    function saveRecord() {
-        let items = [];
-        document.querySelectorAll('#itemsContainer tr').forEach(row => {
-            let n = row.querySelector('.itemName').value;
-            let q = row.querySelector('.qty').value;
-            let p = row.querySelector('.price').value;
-            if(n) items.push(`${q}x ${n} (${p})`);
+    function removeItem(btn) {
+        btn.closest('tr').remove();
+        calculateTotal();
+    }
+
+    // --- Save Data Online ---
+    function saveRecordToOnline() {
+        let totalAmount = calculateTotal();
+        if(totalAmount === 0) return; 
+
+        let customer = document.getElementById('custName').value || 'Unknown Customer';
+        let note = document.getElementById('note').value.trim();
+        
+        // Note ပါရင် Customer နာမည်နဲ့ တွဲပြီး Save လုပ်မည် (Google Sheet ကို ပြင်စရာမလိုအောင်)
+        if (note !== "") {
+            customer = customer + ` (Note: ${note})`;
+        }
+        
+        let itemNames = [];
+        let itemRows = document.querySelectorAll('#itemsContainer tr');
+        itemRows.forEach(row => {
+            let nameInput = row.querySelector('.itemName');
+            let qtyInput = row.querySelector('.qty');
+            let priceInput = row.querySelector('.price');
+            
+            if (nameInput && nameInput.value.trim() !== '') {
+                let qty = qtyInput && qtyInput.value ? qtyInput.value : 1;
+                let price = priceInput && priceInput.value ? priceInput.value : 0;
+                // ပစ္စည်းအမည် နှင့် စျေးနှုန်းကို (^) ခံ၍ တွဲမှတ်မည် 
+                itemNames.push(`${qty}x ${nameInput.value.trim()} ^ ${price}`);
+            }
         });
+        
+        let itemsSummary = itemNames.length > 0 ? itemNames.join(' | ') : 'Items';
 
-        let fd = new URLSearchParams();
-        fd.append('action', 'insert');
-        fd.append('invId', document.getElementById('displayInvId').innerText.replace('ID: ',''));
-        fd.append('date', new Date().toLocaleDateString('en-CA')); // YYYY-MM-DD
-        fd.append('time', new Date().toLocaleTimeString());
-        fd.append('customer', document.getElementById('custName').value || 'Guest');
-        fd.append('payment', document.getElementById('paymentMethod').value);
-        fd.append('items', items.join(' | '));
-        fd.append('discount', document.getElementById('discount').value || 0);
-        fd.append('totalAmount', calculateTotal());
+        let now = new Date();
+        let mm = String(now.getMonth() + 1).padStart(2, '0');
+        let dd = String(now.getDate()).padStart(2, '0');
+        
+        let dateStr = now.getFullYear() + '-' + mm + '-' + dd;
+        let timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        let formData = new URLSearchParams();
+        formData.append('action', 'insert');
+        formData.append('date', dateStr);
+        formData.append('time', timeStr);
+        formData.append('customer', customer);
+        formData.append('items', itemsSummary);
+        formData.append('totalAmount', totalAmount);
 
-        fetch(SCRIPT_URL, { method: 'POST', body: fd });
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: formData
+        }).then(res => console.log('Successfully saved to Google Sheets.'))
+          .catch(err => console.error('Error saving data:', err));
     }
 
     function openHistory() {
         document.getElementById('mainView').style.display = 'none';
         document.getElementById('historyView').style.display = 'block';
-        fetch(SCRIPT_URL + "?t=" + Date.now()).then(r => r.json()).then(data => {
-            allRecords = data.reverse();
-            renderHistory(allRecords);
-        });
-    }
-
-    function renderHistory(data) {
-        let container = document.getElementById('historyList');
-        container.innerHTML = data.map(r => `
-            <div class="record-card">
-                <div style="display:flex; justify-content:space-between; font-weight:bold; color:#d81b60;">
-                    <span>${r.customer}</span>
-                    <span>${parseInt(r.totalAmount).toLocaleString()} Ks</span>
-                </div>
-                <div style="font-size:11px; color:#888; margin-bottom:10px;">ID: ${r.invId} | ${r.date} | Pay: ${r.payment}</div>
-                ${r.items.split(' | ').map(i => `<div class="item-row"><span>🛍️ ${i.split(' (')[0]}</span><span>${i.split(' (')[1]?.replace(')','') || ''} Ks</span></div>`).join('')}
-                ${r.discount > 0 ? `<div style="text-align:right; font-size:12px; color:red; margin-top:5px;">Discount: -${parseInt(r.discount).toLocaleString()} Ks</div>` : ''}
-            </div>
-        `).join('') || "No records found.";
-    }
-
-    function filterHistory() {
-        let val = document.getElementById('searchInput').value.toLowerCase();
-        let filtered = allRecords.filter(r => r.customer.toLowerCase().includes(val));
-        renderHistory(filtered);
+        
+        let today = new Date();
+        let dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+        document.getElementById('filterDate').value = dateStr;
+        document.getElementById('filterMonth').value = '';
+        
+        loadHistory('date');
     }
 
     function closeHistory() {
@@ -264,42 +355,240 @@
         document.getElementById('mainView').style.display = 'block';
     }
 
-    function saveAsImage() {
-        saveRecord();
-        let card = document.getElementById('invoiceCard');
-        card.classList.add('exporting');
-        document.getElementById('saveBtn').style.display = 'none';
-        document.getElementById('loadMsg').style.display = 'block';
+    function cleanTimeString(rawTime) {
+        if (!rawTime) return "";
+        let str = String(rawTime);
+        let match = str.match(/(\d{2}):(\d{2})(?::\d{2})?/);
+        if (match) {
+            let h = parseInt(match[1]);
+            let m = match[2];
+            let ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            h = h ? h : 12; 
+            return h + ":" + m + " " + ampm;
+        }
+        return str; 
+    }
 
-        // Replace inputs with text for photo
-        let inputs = card.querySelectorAll('input, select');
-        inputs.forEach(i => {
-            let s = document.createElement('span');
-            s.className = 'temp-text';
-            s.innerText = i.value || (i.tagName === 'SELECT' ? '' : ' ');
-            i.style.display = 'none';
-            i.parentNode.insertBefore(s, i);
+    function loadHistory(filterType) {
+        let listContainer = document.getElementById('historyList');
+        let totalAmountEl = document.getElementById('historyTotalAmount');
+        
+        listContainer.innerHTML = '<div class="loading-text">Loading data from Database... ⏳</div>';
+        totalAmountEl.innerText = "0";
+
+        let noCacheUrl = SCRIPT_URL + "?t=" + new Date().getTime();
+
+        fetch(noCacheUrl, { cache: 'no-store' })
+            .then(res => res.json())
+            .then(history => {
+                
+                const getFormattedDate = (rawDate) => {
+                    if (!rawDate) return "";
+                    let d = new Date(rawDate);
+                    if (!isNaN(d.getTime())) {
+                        let yyyy = d.getFullYear();
+                        let mm = String(d.getMonth() + 1).padStart(2, '0');
+                        let dd = String(d.getDate()).padStart(2, '0');
+                        return `${yyyy}-${mm}-${dd}`;
+                    }
+                    return String(rawDate);
+                };
+
+                const getBeautifulDate = (rawDate) => {
+                    if (!rawDate) return "";
+                    let d = new Date(rawDate);
+                    if (!isNaN(d.getTime())) {
+                        let options = { month: 'short', day: '2-digit', year: 'numeric' };
+                        return d.toLocaleDateString('en-US', options);
+                    }
+                    return String(rawDate);
+                };
+
+                let filteredRecords = [];
+                
+                if (filterType === 'date') {
+                    let selectedDate = document.getElementById('filterDate').value;
+                    document.getElementById('filterMonth').value = ''; 
+                    filteredRecords = history.filter(r => getFormattedDate(r.date) === selectedDate);
+                } else if (filterType === 'month') {
+                    let selectedMonth = document.getElementById('filterMonth').value;
+                    document.getElementById('filterDate').value = ''; 
+                    filteredRecords = history.filter(r => getFormattedDate(r.date).startsWith(selectedMonth));
+                } else {
+                    document.getElementById('filterDate').value = '';
+                    document.getElementById('filterMonth').value = '';
+                    filteredRecords = history;
+                }
+
+                filteredRecords.reverse(); 
+
+                listContainer.innerHTML = '';
+                let calcTotal = 0;
+
+                if (filteredRecords.length === 0) {
+                    listContainer.innerHTML = '<p style="text-align:center; color:#888; padding: 20px;">No sales records found.</p>';
+                } else {
+                    filteredRecords.forEach(record => {
+                        let amount = parseFloat(record.totalAmount) || 0;
+                        calcTotal += amount;
+                        
+                        let displayDate = getBeautifulDate(record.date);
+                        let displayTime = cleanTimeString(record.time); 
+                        
+                        let itemsStr = String(record.items);
+                        let itemsArray = itemsStr.includes(' | ') ? itemsStr.split(' | ') : itemsStr.split(', ');
+                        
+                        // Item များကို ညာဘက်ထောင့်တွင် စျေးနှုန်းပါဝင်အောင် ပြင်ဆင်ခြင်း
+                        let itemsHtml = itemsArray.map(item => {
+                            if(item.trim() !== '') {
+                                let parts = item.split(' ^ ');
+                                let itemNamePart = parts[0].trim();
+                                let itemPricePart = parts.length > 1 && parts[1].trim() !== '0' ? parseInt(parts[1]).toLocaleString() + ' Ks' : '';
+                                
+                                return `
+                                <div class="item-tag">
+                                    <span class="item-tag-name">${itemNamePart}</span>
+                                    <span class="item-tag-price">${itemPricePart}</span>
+                                </div>`;
+                            }
+                            return '';
+                        }).join('');
+                        
+                        let itemDiv = document.createElement('div');
+                        itemDiv.className = 'record-item';
+                        itemDiv.innerHTML = `
+                            <div class="record-item-header">
+                                <span class="cust-name">👤 ${record.customer}</span>
+                                <span class="amt">${amount.toLocaleString()} Ks</span>
+                            </div>
+                            <div class="record-body">
+                                <div class="record-items-container">
+                                    ${itemsHtml}
+                                </div>
+                            </div>
+                            <div class="record-footer">
+                                <span class="record-date-badge">🕒 ${displayDate} (${displayTime})</span>
+                                <button class="delete-record-btn" onclick="deleteSingleRecord(${record.row})">❌ Delete</button>
+                            </div>
+                        `;
+                        listContainer.appendChild(itemDiv);
+                    });
+                }
+                
+                totalAmountEl.innerText = calcTotal.toLocaleString();
+            })
+            .catch(error => {
+                listContainer.innerHTML = '<p style="text-align:center; color:red; padding: 20px;">Failed to load data. Please check internet connection.</p>';
+            });
+    }
+
+    function deleteSingleRecord(rowId) {
+        if(confirm("Are you sure you want to delete this specific record from Online Database?")) {
+            let listContainer = document.getElementById('historyList');
+            listContainer.innerHTML = '<div class="loading-text">Deleting record... ⏳</div>';
+
+            let formData = new URLSearchParams();
+            formData.append('action', 'delete');
+            formData.append('row', rowId);
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.text())
+            .then(text => {
+                let currentFilter = 'all';
+                if (document.getElementById('filterDate').value) currentFilter = 'date';
+                else if (document.getElementById('filterMonth').value) currentFilter = 'month';
+                loadHistory(currentFilter);
+            })
+            .catch(err => alert("Failed to delete record."));
+        }
+    }
+
+    function goBackToMain() {
+        document.getElementById('resultView').style.display = 'none';
+        document.getElementById('mainView').style.display = 'block';
+        
+        let textInputs = document.querySelectorAll('.input-group input');
+        textInputs.forEach(input => input.value = '');
+        
+        document.getElementById('deliFee').value = '';
+
+        let tbody = document.getElementById('itemsContainer');
+        tbody.innerHTML = `
+            <tr>
+                <td><input type="text" class="itemName" placeholder="e.g. Floral Dress" autocomplete="off" spellcheck="false" onfocus="this.select()"></td>
+                <td><input type="number" class="qty" value="1" min="1" oninput="calculateTotal()" style="text-align: center;" autocomplete="off" onfocus="this.select()"></td>
+                <td><input type="number" class="price" placeholder="0" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off" onfocus="this.select()"></td>
+                <td><button type="button" class="remove-btn" onclick="removeItem(this)">X</button></td>
+            </tr>
+        `;
+        
+        calculateTotal();
+        setCurrentDate(); 
+        window.scrollTo(0, 0); 
+    }
+
+    function saveAsImage() {
+        window.scrollTo(0, 0);
+        
+        saveRecordToOnline();
+
+        let container = document.getElementById('invoiceCard');
+        let saveBtn = document.getElementById('saveBtn');
+        let loadingMsg = document.getElementById('loadingMsg');
+
+        saveBtn.style.display = 'none';
+        loadingMsg.style.display = 'block';
+        container.classList.add('exporting');
+
+        let inputs = container.querySelectorAll('input');
+        inputs.forEach(input => {
+            let span = document.createElement('span');
+            span.className = 'temp-text';
+            span.innerText = input.value || ' '; 
+            if(input.classList.contains('qty') || input.style.textAlign === 'center') span.style.textAlign = 'center';
+            if(input.classList.contains('price') || input.style.textAlign === 'right') span.style.textAlign = 'right';
+            if(input.id === 'deliFee') span.style.textAlign = 'right';
+            input.parentNode.insertBefore(span, input);
+            input.style.display = 'none';
         });
 
         setTimeout(() => {
-            html2canvas(card, {scale:2, useCORS:true}).then(canvas => {
-                document.getElementById('generatedImg').src = canvas.toDataURL('image/jpeg', 0.9);
+            html2canvas(container, { scale: 2, backgroundColor: "#ffffff", logging: false, useCORS: true }).then(canvas => {
+                let tempTexts = container.querySelectorAll('.temp-text');
+                tempTexts.forEach(span => span.remove());
+                inputs.forEach(input => input.style.display = '');
+
+                container.classList.remove('exporting');
+                saveBtn.style.display = 'block';
+                loadingMsg.style.display = 'none';
+
+                let imgData = canvas.toDataURL('image/jpeg', 0.95);
+                document.getElementById('generatedImg').src = imgData;
                 document.getElementById('mainView').style.display = 'none';
                 document.getElementById('resultView').style.display = 'block';
+                window.scrollTo(0, 0); 
+            }).catch(err => {
+                let tempTexts = container.querySelectorAll('.temp-text');
+                tempTexts.forEach(span => span.remove());
+                inputs.forEach(input => input.style.display = '');
                 
-                // Reset for next
-                card.classList.remove('exporting');
-                card.querySelectorAll('.temp-text').forEach(t => t.remove());
-                inputs.forEach(i => i.style.display = '');
-                document.getElementById('saveBtn').style.display = 'block';
-                document.getElementById('loadMsg').style.display = 'none';
-            });
-        }, 500);
-    }
+                if(err.message.includes("Tainted")) {
+                    alert("ပုံသိမ်း၍မရပါ။ ဖိုင်ကို ဖုန်းထဲမှ တိုက်ရိုက်ဖွင့်ထားသောကြောင့် လုံခြုံရေးအရ ပိတ်ထားခြင်းဖြစ်ပါသည်။ ကျေးဇူးပြု၍ GitHub လင့်ခ် (https://...) မှ ဝင်ရောက်အသုံးပြုပါ။");
+                } else {
+                    alert("Cannot generate image. (Error: " + err.message + ")");
+                }
 
-    function goBackMain() {
-        location.reload(); // Quick reset
+                saveBtn.style.display = 'block';
+                loadingMsg.style.display = 'none';
+                container.classList.remove('exporting');
+            });
+        }, 500); 
     }
 </script>
+
 </body>
 </html>
