@@ -26,7 +26,6 @@
 
         .app-container { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding-bottom: 25px; max-width: 600px; margin: auto; position: relative; overflow: hidden; }
         
-        /* Watermark */
         .watermark { display: none; }
         .app-container.exporting .watermark { display: flex; justify-content: center; align-items: center; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; opacity: 0.08; }
         .app-container.exporting .watermark img { width: 80%; max-width: 350px; height: auto; }
@@ -61,7 +60,6 @@
         
         .thank-you { display: block; margin-top: 25px; font-size: 14px; color: #d81b60; font-style: italic; text-align: center; font-weight: bold; display: none; }
 
-        /* Exporting Mode Fixes */
         .app-container.exporting { box-shadow: none; padding: 20px; border: 2px solid #d81b60; border-radius: 15px; background: #fff; }
         .app-container.exporting .add-btn, .app-container.exporting .remove-btn { display: none !important; }
         .app-container.exporting th:last-child, .app-container.exporting td:last-child { display: none !important; }
@@ -69,13 +67,13 @@
         .app-container.exporting .header { border-bottom: 2px solid #d81b60; }
         .app-container.exporting .total-row { border-top: 2px solid #d81b60 !important; }
         .app-container.exporting .thank-you { display: block; }
-        
-        /* Temp Text Styling ensuring alignment matches inputs exactly */
-        .temp-text { display: block; flex: 1; font-size: 14px; color: #000; box-sizing: border-box; }
 
         .controls-container { max-width: 600px; margin: 20px auto 0 auto; padding: 0 10px; }
         .print-btn { display: block; width: 100%; padding: 14px; background-color: #d81b60; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(216,27,96,0.2); }
         #loadingMsg { display: none; text-align: center; color: #d81b60; font-weight: bold; margin-top: 15px; font-size: 14px; }
+        
+        /* Fixed temp-text aligning for correct layout */
+        .temp-text { display: block; width: 100%; box-sizing: border-box; font-size: 14px; }
 
         #resultView { display: none; padding: 15px; max-width: 600px; margin: auto; min-height: 100vh; background-color: #fce4ec; }
         .result-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
@@ -165,7 +163,7 @@
 
 <script>
     // --- Auto Update Version ---
-    const APP_VERSION = "1.0.6"; 
+    const APP_VERSION = "1.0.7"; 
     function checkAppUpdate() {
         const storedVersion = localStorage.getItem('dressup_app_version');
         if (storedVersion !== APP_VERSION) { localStorage.setItem('dressup_app_version', APP_VERSION); window.location.reload(true); }
@@ -219,13 +217,12 @@
     function addItem() {
         let tbody = document.getElementById('itemsContainer');
         let newRow = document.createElement('tr');
-        newRow.innerHTML = `<td><input type="text" class="itemName" placeholder="e.g. Floral Dress"></td><td><input type="number" class="qty" value="1" min="1" oninput="calculateTotal()" style="text-align: center;"></td><td><input type="number" class="price" placeholder="0" min="0" oninput="calculateTotal()" style="text-align: right;"></td><td><button type="button" class="remove-btn" onclick="removeItem(this)">X</button></td>`;
+        newRow.innerHTML = `<td><input type="text" class="itemName" placeholder="e.g. Floral Dress" autocomplete="off"></td><td><input type="number" class="qty" value="1" min="1" oninput="calculateTotal()" style="text-align: center;" autocomplete="off"></td><td><input type="number" class="price" placeholder="0" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off"></td><td><button type="button" class="remove-btn" onclick="removeItem(this)">X</button></td>`;
         tbody.appendChild(newRow);
         calculateTotal();
     }
     function removeItem(btn) { btn.closest('tr').remove(); calculateTotal(); }
 
-    // --- Save Data Logic (Date/Time Fix) ---
     function saveRecordToOnline() {
         let totalAmount = calculateTotal(); if(totalAmount === 0) return; 
         let customer = document.getElementById('custName').value || 'Guest';
@@ -239,7 +236,6 @@
             }
         });
         
-        // ဖုန်း၏ Local Time ကိုသာ အတိအကျ ယူရန် (Timezone လွဲခြင်းကို တားဆီးရန်)
         let now = new Date();
         let yyyy = now.getFullYear();
         let mm = String(now.getMonth() + 1).padStart(2, '0');
@@ -264,7 +260,7 @@
         let yyyy = now.getFullYear();
         let mm = String(now.getMonth() + 1).padStart(2, '0');
         let dd = String(now.getDate()).padStart(2, '0');
-        document.getElementById('filterDate').value = `${yyyy}-${mm}-${dd}`; // Default Today
+        document.getElementById('filterDate').value = `${yyyy}-${mm}-${dd}`;
         loadHistory('date'); 
     }
     function closeHistory() { document.getElementById('historyView').style.display = 'none'; document.getElementById('mainView').style.display = 'block'; }
@@ -279,13 +275,11 @@
             let calcTotal = 0;
             
             const cleanDateStr = (raw) => {
-                // YYYY-MM-DD ပုံစံဖြစ်ပါက
                 if (String(raw).match(/^\d{4}-\d{2}-\d{2}$/)) {
                     let parts = String(raw).split('-');
                     let d = new Date(parts[0], parts[1]-1, parts[2]);
                     return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
                 }
-                // အခြားပုံစံဖြစ်ပါက
                 let d = new Date(raw);
                 if(!isNaN(d.getTime())) return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
                 return raw;
@@ -300,18 +294,30 @@
 
             let filtered = history;
             if(filterType === 'date') {
-                let sel = document.getElementById('filterDate').value; // YYYY-MM-DD
+                let sel = document.getElementById('filterDate').value; 
                 if(sel) {
                     filtered = history.filter(r => {
-                        // Check if exact match or if parsed date matches
                         if (r.date === sel) return true;
                         let rDate = new Date(r.date);
-                        return !isNaN(rDate.getTime()) && rDate.toISOString().split('T')[0] === sel;
+                        if(isNaN(rDate.getTime())) return false;
+                        let yyyy = rDate.getFullYear();
+                        let mm = String(rDate.getMonth() + 1).padStart(2, '0');
+                        let dd = String(rDate.getDate()).padStart(2, '0');
+                        return `${yyyy}-${mm}-${dd}` === sel;
                     });
                 }
             } else if(filterType === 'month') {
                 let sel = document.getElementById('filterMonth').value;
-                if(sel) filtered = history.filter(r => r.date.startsWith(sel));
+                if(sel) {
+                    filtered = history.filter(r => {
+                        if (r.date.startsWith(sel)) return true;
+                        let rDate = new Date(r.date);
+                        if(isNaN(rDate.getTime())) return false;
+                        let yyyy = rDate.getFullYear();
+                        let mm = String(rDate.getMonth() + 1).padStart(2, '0');
+                        return `${yyyy}-${mm}` === sel;
+                    });
+                }
             }
 
             filtered.reverse().forEach(record => {
@@ -341,7 +347,7 @@
 
     function deleteSingleRecord(rowId) {
         if(confirm("Delete record?")) {
-            let fd = newSearchParams(); fd.append('action', 'delete'); fd.append('row', rowId);
+            let fd = new URLSearchParams(); fd.append('action', 'delete'); fd.append('row', rowId);
             fetch(SCRIPT_URL, { method: 'POST', body: fd }).then(() => {
                 let currentType = document.getElementById('filterMonth').value ? 'month' : (document.getElementById('filterDate').value ? 'date' : 'all');
                 loadHistory(currentType);
@@ -351,7 +357,7 @@
 
     function goBackToMain() { location.reload(true); }
 
-    // --- Screenshot Logic Fix (Layout Preservation) ---
+    // --- Fixed Screenshot Formatting ---
     function saveAsImage() {
         saveRecordToOnline();
         let container = document.getElementById('invoiceCard');
@@ -361,31 +367,32 @@
         
         let inputs = container.querySelectorAll('input');
         inputs.forEach(input => {
-            let div = document.createElement('div');
-            div.className = 'temp-text';
+            let span = document.createElement('span');
+            span.className = 'temp-text';
             let val = input.value || ' ';
             
-            // Match input styles explicitly to prevent layout collapse
             if (input.id === 'deliFee') {
-                div.innerText = (parseInt(val) || 0).toLocaleString() + ' Ks';
-                div.style.textAlign = 'right';
-                div.style.fontWeight = 'bold';
-                div.style.padding = '8px';
+                span.innerText = (parseInt(val) || 0).toLocaleString() + ' Ks';
+                // Subtotal ၏ Color နှင့် Font-weight အတိုင်း အတိအကျတူညီစေရန်
+                span.style.color = '#555';
+                span.style.fontWeight = 'bold';
+                span.style.display = 'inline-block';
+                span.style.textAlign = 'right';
             } else if (input.classList.contains('qty')) { 
-                div.innerText = val; 
-                div.style.textAlign = 'center'; 
-                div.style.padding = '10px 4px';
+                span.innerText = val; 
+                span.style.textAlign = 'center'; 
+                span.style.display = 'block';
             } else if (input.classList.contains('price')) { 
-                div.innerText = parseInt(val || 0).toLocaleString(); 
-                div.style.textAlign = 'right'; 
-                div.style.padding = '10px 4px';
+                span.innerText = parseInt(val || 0).toLocaleString(); 
+                span.style.textAlign = 'right'; 
+                span.style.display = 'block';
             } else { 
-                div.innerText = val; 
-                div.style.textAlign = 'left'; 
-                div.style.padding = '10px';
+                span.innerText = val; 
+                span.style.textAlign = 'left'; 
+                span.style.display = 'block';
             }
             
-            input.parentNode.insertBefore(div, input);
+            input.parentNode.insertBefore(span, input);
             input.style.display = 'none';
         });
 
