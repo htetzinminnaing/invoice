@@ -99,11 +99,16 @@
         /* New Cleaner Record Item Design */
         .record-item { background: #fffafb; border: 1px solid #f8bbd0; border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .record-item:last-child { margin-bottom: 0; }
-        .record-item-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #f8bbd0; padding-bottom: 8px; margin-bottom: 8px; }
+        .record-item-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #f8bbd0; padding-bottom: 8px; margin-bottom: 10px; }
         .record-item-header .cust-name { font-weight: bold; font-size: 15px; color: #d81b60; }
         .record-item-header .amt { font-weight: bold; font-size: 15px; color: #333; }
-        .record-body { font-size: 13px; color: #555; line-height: 1.6; }
-        .record-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+        
+        /* ပစ္စည်းများကို သပ်ရပ်စွာပြသမည့် ဒီဇိုင်းအသစ် */
+        .record-items-container { display: flex; flex-direction: column; gap: 5px; }
+        .item-tag { background: #fff; border: 1px solid #fce4ec; padding: 6px 10px; border-radius: 6px; font-size: 12.5px; color: #444; font-weight: 500; }
+        .item-tag::before { content: "🛍️"; margin-right: 6px; }
+        
+        .record-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
         .record-date-badge { font-size: 11px; color: #666; font-weight: bold; background: #eee; padding: 4px 8px; border-radius: 4px; }
         .delete-record-btn { background: #ff5252; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
         
@@ -231,14 +236,12 @@
     // --- Google App Script API Link ---
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLgvYEDVw0mgftIaF0DgzCQapiMTPVuE_5eTCxRknJHE0_h-xJO5Zz1zwOu_DTY-KP/exec";
 
-    // အက်ပ်ပွင့်လာသည်နှင့် Auto Date ထည့်ပေးမည့်လုပ်ဆောင်ချက်
     function setCurrentDate() {
         let now = new Date();
         let options = { day: '2-digit', month: 'short', year: 'numeric' };
         document.getElementById('displayCurrentDate').innerText = "Date: " + now.toLocaleDateString('en-GB', options);
     }
     
-    // Page စပွင့်ချိန်တွင် Auto Date ဖော်ပြမည်
     window.onload = function() {
         setCurrentDate();
     };
@@ -278,7 +281,7 @@
         calculateTotal();
     }
 
-    // --- Save Data Online ---
+    // --- Save Data Online (Updated for Quantity) ---
     function saveRecordToOnline() {
         let totalAmount = calculateTotal();
         if(totalAmount === 0) return; 
@@ -286,10 +289,18 @@
         let customer = document.getElementById('custName').value || 'Unknown Customer';
         
         let itemNames = [];
-        document.querySelectorAll('.itemName').forEach(input => {
-            if(input.value.trim() !== '') itemNames.push(input.value.trim());
+        let itemRows = document.querySelectorAll('#itemsContainer tr');
+        itemRows.forEach(row => {
+            let nameInput = row.querySelector('.itemName');
+            let qtyInput = row.querySelector('.qty');
+            if (nameInput && nameInput.value.trim() !== '') {
+                let qty = qtyInput && qtyInput.value ? qtyInput.value : 1;
+                // ပစ္စည်းအရေအတွက်ကိုပါ "2x ItemName" ပုံစံဖြင့် မှတ်သားမည်
+                itemNames.push(`${qty}x ${nameInput.value.trim()}`);
+            }
         });
-        let itemsSummary = itemNames.length > 0 ? itemNames.join(', ') : 'Items';
+        // ဒေတာအသစ်များကို " | " ဖြင့် ခွဲခြားမှတ်သားမည်
+        let itemsSummary = itemNames.length > 0 ? itemNames.join(' | ') : 'Items';
 
         let now = new Date();
         let mm = String(now.getMonth() + 1).padStart(2, '0');
@@ -313,7 +324,6 @@
           .catch(err => console.error('Error saving data:', err));
     }
 
-    // --- History View Logic ---
     function openHistory() {
         document.getElementById('mainView').style.display = 'none';
         document.getElementById('historyView').style.display = 'block';
@@ -331,11 +341,9 @@
         document.getElementById('mainView').style.display = 'block';
     }
 
-    // ရှုပ်ယှက်ခတ်နေသော အချိန်စာသားထဲမှ နာရီနှင့် မိနစ်ကိုသာ သီးသန့်ဆွဲထုတ်ပေးမည့် Function
     function cleanTimeString(rawTime) {
         if (!rawTime) return "";
         let str = String(rawTime);
-        // HH:MM:SS ပုံစံ ပါမပါ ရှာဖွေခြင်း
         let match = str.match(/(\d{2}):(\d{2})(?::\d{2})?/);
         if (match) {
             let h = parseInt(match[1]);
@@ -373,7 +381,6 @@
                     return String(rawDate);
                 };
 
-                // ဖတ်ရလွယ်အောင် Date ကို လှလှလေးပြောင်းပေးမည် (ဥပမာ - Mar 01, 2026)
                 const getBeautifulDate = (rawDate) => {
                     if (!rawDate) return "";
                     let d = new Date(rawDate);
@@ -413,17 +420,31 @@
                         calcTotal += amount;
                         
                         let displayDate = getBeautifulDate(record.date);
-                        let displayTime = cleanTimeString(record.time); // အချိန်ကို ရှင်းလင်းမည်
+                        let displayTime = cleanTimeString(record.time); 
+                        
+                        // Items များကို သပ်ရပ်သော Tag ပုံစံဖြင့် ပြောင်းလဲခြင်း
+                        let itemsStr = String(record.items);
+                        // အဟောင်းရော အသစ်ပါ ခွဲထုတ်နိုင်ရန် စီစဉ်ထားသည်
+                        let itemsArray = itemsStr.includes(' | ') ? itemsStr.split(' | ') : itemsStr.split(', ');
+                        
+                        let itemsHtml = itemsArray.map(item => {
+                            if(item.trim() !== '') {
+                                return `<div class="item-tag">${item.trim()}</div>`;
+                            }
+                            return '';
+                        }).join('');
                         
                         let itemDiv = document.createElement('div');
-                        itemDiv.className = 'record-item'; // ကတ်ပုံစံ ဒီဇိုင်းအသစ်
+                        itemDiv.className = 'record-item';
                         itemDiv.innerHTML = `
                             <div class="record-item-header">
                                 <span class="cust-name">👤 ${record.customer}</span>
                                 <span class="amt">${amount.toLocaleString()} Ks</span>
                             </div>
                             <div class="record-body">
-                                🛍️ <strong>Items:</strong> ${record.items}
+                                <div class="record-items-container">
+                                    ${itemsHtml}
+                                </div>
                             </div>
                             <div class="record-footer">
                                 <span class="record-date-badge">🕒 ${displayDate} (${displayTime})</span>
@@ -485,7 +506,7 @@
         `;
         
         calculateTotal();
-        setCurrentDate(); // Back နှိပ်တိုင်း Date ကို အသစ်ပြန်ချိန်ပေးမည်
+        setCurrentDate(); 
         window.scrollTo(0, 0); 
     }
 
