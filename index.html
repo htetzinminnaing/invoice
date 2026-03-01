@@ -150,14 +150,14 @@
     <div class="history-card">
         <div class="history-header"><h2>Online Sales Report</h2><button class="close-history" onclick="closeHistory()">Close</button></div>
         <div class="filter-group"><input type="date" id="filterDate" onchange="loadHistory('date')"><input type="month" id="filterMonth" onchange="loadHistory('month')"></div>
-        <div style="text-align: center; margin-bottom: 15px;"><button onclick="loadHistory('all')" style="background: #888; color:white; border:none; padding: 8px 15px; border-radius: 4px; font-size: 12px;">Show All Time</button></div>
+        <div style="text-align: center; margin-bottom: 15px;"><button onclick="loadHistory('all')" style="background: #888; color:white; border:none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 12px;">Show All Time</button></div>
         <div class="total-sales-badge">Total Sales: <span id="historyTotalAmount">0</span> Ks</div>
         <div id="historyList"></div>
     </div>
 </div>
 
 <script>
-    const APP_VERSION = "1.0.4"; 
+    const APP_VERSION = "1.0.5"; 
     function checkAppUpdate() {
         const storedVersion = localStorage.getItem('dressup_app_version');
         if (storedVersion !== APP_VERSION) { localStorage.setItem('dressup_app_version', APP_VERSION); window.location.reload(true); }
@@ -174,7 +174,8 @@
 
     mainBody.addEventListener('touchstart', (e) => { if (window.scrollY === 0) touchStart = e.touches[0].pageY; }, {passive: true});
     mainBody.addEventListener('touchmove', (e) => {
-        const pullDist = e.touches[0].pageY - touchStart;
+        const touchMove = e.touches[0].pageY;
+        const pullDist = touchMove - touchStart;
         if (window.scrollY === 0 && pullDist > 0 && pullDist < 120) {
             pullIndicator.style.height = pullDist + 'px';
             pullText.innerText = pullDist > 70 ? "Release to Update... 🔄" : "Pull down to Update... ↓";
@@ -238,7 +239,15 @@
         fetch(SCRIPT_URL, { method: 'POST', body: fd }).catch(err => console.error(err));
     }
 
-    function openHistory() { document.getElementById('mainView').style.display = 'none'; document.getElementById('historyView').style.display = 'block'; loadHistory('date'); }
+    function openHistory() {
+        document.getElementById('mainView').style.display = 'none'; 
+        document.getElementById('historyView').style.display = 'block'; 
+        // ယနေ့ရက်စွဲကို အလိုအလျောက် သတ်မှတ်မည်
+        let today = new Date();
+        let dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+        document.getElementById('filterDate').value = dateStr;
+        loadHistory('date'); 
+    }
     function closeHistory() { document.getElementById('historyView').style.display = 'none'; document.getElementById('mainView').style.display = 'block'; }
 
     function loadHistory(filterType) {
@@ -250,57 +259,72 @@
             listContainer.innerHTML = '';
             let calcTotal = 0;
             
-            // ရက်စွဲသန့်စင်ခြင်း Function
-            const cleanDate = (raw) => {
+            const cleanDateString = (raw) => {
                 let d = new Date(raw);
-                if(isNaN(d.getTime())) return raw;
+                if(isNaN(d.getTime())) return String(raw);
                 return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
             };
 
-            // အချိန်သန့်စင်ခြင်း Function (HH:MM AM/PM ပုံစံသာ ယူမည်)
             const cleanTime = (raw) => {
                 if(!raw) return "";
                 let match = String(raw).match(/(\d{1,2}):(\d{2})(?::\d{2})?\s?(AM|PM)?/i);
                 if(match) return `${match[1]}:${match[2]} ${match[3] || ""}`;
-                return raw;
+                return String(raw);
             };
 
-            // ပစ္စည်းစျေးနှုန်း သန့်စင်ခြင်း
             const formatPrice = (p) => {
                 let n = parseInt(p);
-                return isNaN(n) ? "" : n.toLocaleString() + " Ks";
+                return (isNaN(n) || n === 0) ? "" : n.toLocaleString() + " Ks";
             };
 
-            // Filter ပြုလုပ်ခြင်း
             let filtered = history;
             if(filterType === 'date') {
                 let sel = document.getElementById('filterDate').value;
-                if(sel) filtered = history.filter(r => new Date(r.date).toISOString().split('T')[0] === sel);
+                if(sel) filtered = history.filter(r => {
+                    let rDate = new Date(r.date);
+                    return !isNaN(rDate.getTime()) && rDate.toISOString().split('T')[0] === sel;
+                });
             } else if(filterType === 'month') {
                 let sel = document.getElementById('filterMonth').value;
-                if(sel) filtered = history.filter(r => new Date(r.date).toISOString().startsWith(sel));
+                if(sel) filtered = history.filter(r => {
+                    let rDate = new Date(r.date);
+                    return !isNaN(rDate.getTime()) && rDate.toISOString().startsWith(sel);
+                });
             }
 
             filtered.reverse().forEach(record => {
                 calcTotal += parseFloat(record.totalAmount) || 0;
-                let itemsHtml = record.items.split(' | ').map(item => {
+                
+                // Item များကို နည်းမျိုးစုံဖြင့် Parse လုပ်ရန် (အဟောင်းရော အသစ်ပါ အဆင်ပြေစေရန်)
+                let itemsStr = String(record.items);
+                let itemsArray = itemsStr.includes(' | ') ? itemsStr.split(' | ') : (itemsStr.includes(',') ? itemsStr.split(',') : [itemsStr]);
+                
+                let itemsHtml = itemsArray.map(item => { 
+                    item = item.trim();
+                    if(item === '') return '';
                     let parts = item.split(' ^ ');
-                    return `<div class="item-tag"><span class="item-tag-name">${parts[0]}</span><span class="item-tag-price">${formatPrice(parts[1])}</span></div>`;
+                    let name = parts[0];
+                    let price = parts.length > 1 ? formatPrice(parts[1]) : "";
+                    return `<div class="item-tag"><span class="item-tag-name">${name}</span><span class="item-tag-price">${price}</span></div>`; 
                 }).join('');
                 
                 let itemDiv = document.createElement('div');
                 itemDiv.className = 'record-item';
-                itemDiv.innerHTML = `<div class="record-item-header"><span class="cust-name">👤 ${record.customer}</span><span class="amt">${parseInt(record.totalAmount).toLocaleString()} Ks</span></div><div class="record-items-container">${itemsHtml}</div><div class="record-footer"><span class="record-date-badge">🕒 ${cleanDate(record.date)} (${cleanTime(record.time)})</span><button class="delete-record-btn" onclick="deleteSingleRecord(${record.row})">❌ Delete</button></div>`;
+                itemDiv.innerHTML = `<div class="record-item-header"><span class="cust-name">👤 ${record.customer}</span><span class="amt">${parseInt(record.totalAmount).toLocaleString()} Ks</span></div><div class="record-items-container">${itemsHtml}</div><div class="record-footer"><span class="record-date-badge">🕒 ${cleanDateString(record.date)} (${cleanTime(record.time)})</span><button class="delete-record-btn" onclick="deleteSingleRecord(${record.row})">❌ Delete</button></div>`;
                 listContainer.appendChild(itemDiv);
             });
             totalAmountEl.innerText = calcTotal.toLocaleString();
+            if(filtered.length === 0) listContainer.innerHTML = '<p style="text-align:center; color:#888; padding: 20px;">No sales records found for this date.</p>';
         });
     }
 
     function deleteSingleRecord(rowId) {
         if(confirm("Delete record?")) {
             let fd = new URLSearchParams(); fd.append('action', 'delete'); fd.append('row', rowId);
-            fetch(SCRIPT_URL, { method: 'POST', body: fd }).then(() => loadHistory('all'));
+            fetch(SCRIPT_URL, { method: 'POST', body: fd }).then(() => {
+                let currentType = document.getElementById('filterMonth').value ? 'month' : 'date';
+                loadHistory(currentType);
+            });
         }
     }
 
