@@ -28,7 +28,7 @@
         .report-btn { background: #d81b60; color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; box-shadow: 0 2px 5px rgba(216,27,96,0.2); }
         
         /* Header Logo Styling */
-        .header { text-align: center; border-bottom: 2px solid #d81b60; padding-bottom: 12px; margin-bottom: 15px; z-index: 2; position: relative; }
+        .header { text-align: center; border-bottom: 2px solid #d81b60; padding-bottom: 12px; margin-bottom: 5px; z-index: 2; position: relative; }
         .header img.shop-logo { width: 100%; max-width: 250px; height: auto; border-radius: 8px; margin-bottom: 8px; }
         .header .shop-address { color: #555; font-size: 11px; margin-top: 5px; line-height: 1.5; }
         
@@ -96,15 +96,21 @@
         
         .total-sales-badge { background: #fff0f4; border: 1px dashed #d81b60; padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; color: #d81b60; margin-bottom: 15px; }
         
-        .record-item { border-bottom: 1px solid #eee; padding: 12px 0; }
-        .record-item:last-child { border-bottom: none; }
-        .record-title { font-weight: bold; color: #333; font-size: 14px; margin-bottom: 4px; display: flex; justify-content: space-between; }
-        .record-detail { color: #777; font-size: 12px; display: flex; justify-content: space-between; align-items: center; margin-top: 6px; line-height: 1.5; }
-        .record-amount { color: #d81b60; font-weight: bold; font-size: 15px; }
-        
-        .delete-record-btn { background: #ff5252; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        /* New Cleaner Record Item Design */
+        .record-item { background: #fffafb; border: 1px solid #f8bbd0; border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .record-item:last-child { margin-bottom: 0; }
+        .record-item-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #f8bbd0; padding-bottom: 8px; margin-bottom: 8px; }
+        .record-item-header .cust-name { font-weight: bold; font-size: 15px; color: #d81b60; }
+        .record-item-header .amt { font-weight: bold; font-size: 15px; color: #333; }
+        .record-body { font-size: 13px; color: #555; line-height: 1.6; }
+        .record-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+        .record-date-badge { font-size: 11px; color: #666; font-weight: bold; background: #eee; padding: 4px 8px; border-radius: 4px; }
+        .delete-record-btn { background: #ff5252; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
         
         .loading-text { text-align: center; color: #d81b60; font-weight: bold; font-size: 14px; padding: 20px; }
+        
+        /* Auto Date Display */
+        #displayCurrentDate { text-align: right; font-size: 12px; font-weight: bold; color: #d81b60; margin-bottom: 6px; padding-right: 2px; }
     </style>
 </head>
 <body>
@@ -122,9 +128,11 @@
         <div class="header">
             <img src="logo.jpg" alt="Dressup By May Logo" class="shop-logo">
             <p class="shop-address">
-                No.428(A), Thuta Street, (4) Ward, South Okkalapa Township, Yangon, Myanmar.<strong>Tel: +95 9 509 5013</strong>
+                No.428(A), Thuta Street, (4) Ward, South Okkalapa Township, Yangon, Myanmar. <strong>Tel: +95 9 509 5013</strong>
             </p>
         </div>
+
+        <div id="displayCurrentDate">Date: </div>
 
         <div class="input-group">
             <label>Customer Name</label>
@@ -135,8 +143,8 @@
             <input type="text" placeholder="09..." autocomplete="off" onfocus="this.select()">
         </div>
         <div class="input-group">
-            <label>Date / Address</label>
-            <input type="text" placeholder="Delivery address or date" autocomplete="off" spellcheck="false" onfocus="this.select()">
+            <label>Address</label>
+            <input type="text" placeholder="Delivery address" autocomplete="off" spellcheck="false" onfocus="this.select()">
         </div>
 
         <table id="invoiceTable">
@@ -222,6 +230,18 @@
 <script>
     // --- Google App Script API Link ---
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLgvYEDVw0mgftIaF0DgzCQapiMTPVuE_5eTCxRknJHE0_h-xJO5Zz1zwOu_DTY-KP/exec";
+
+    // အက်ပ်ပွင့်လာသည်နှင့် Auto Date ထည့်ပေးမည့်လုပ်ဆောင်ချက်
+    function setCurrentDate() {
+        let now = new Date();
+        let options = { day: '2-digit', month: 'short', year: 'numeric' };
+        document.getElementById('displayCurrentDate').innerText = "Date: " + now.toLocaleDateString('en-GB', options);
+    }
+    
+    // Page စပွင့်ချိန်တွင် Auto Date ဖော်ပြမည်
+    window.onload = function() {
+        setCurrentDate();
+    };
 
     function calculateTotal() {
         let subTotal = 0;
@@ -311,6 +331,23 @@
         document.getElementById('mainView').style.display = 'block';
     }
 
+    // ရှုပ်ယှက်ခတ်နေသော အချိန်စာသားထဲမှ နာရီနှင့် မိနစ်ကိုသာ သီးသန့်ဆွဲထုတ်ပေးမည့် Function
+    function cleanTimeString(rawTime) {
+        if (!rawTime) return "";
+        let str = String(rawTime);
+        // HH:MM:SS ပုံစံ ပါမပါ ရှာဖွေခြင်း
+        let match = str.match(/(\d{2}):(\d{2})(?::\d{2})?/);
+        if (match) {
+            let h = parseInt(match[1]);
+            let m = match[2];
+            let ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            h = h ? h : 12; 
+            return h + ":" + m + " " + ampm;
+        }
+        return str; 
+    }
+
     function loadHistory(filterType) {
         let listContainer = document.getElementById('historyList');
         let totalAmountEl = document.getElementById('historyTotalAmount');
@@ -332,6 +369,17 @@
                         let mm = String(d.getMonth() + 1).padStart(2, '0');
                         let dd = String(d.getDate()).padStart(2, '0');
                         return `${yyyy}-${mm}-${dd}`;
+                    }
+                    return String(rawDate);
+                };
+
+                // ဖတ်ရလွယ်အောင် Date ကို လှလှလေးပြောင်းပေးမည် (ဥပမာ - Mar 01, 2026)
+                const getBeautifulDate = (rawDate) => {
+                    if (!rawDate) return "";
+                    let d = new Date(rawDate);
+                    if (!isNaN(d.getTime())) {
+                        let options = { month: 'short', day: '2-digit', year: 'numeric' };
+                        return d.toLocaleDateString('en-US', options);
                     }
                     return String(rawDate);
                 };
@@ -364,17 +412,21 @@
                         let amount = parseFloat(record.totalAmount) || 0;
                         calcTotal += amount;
                         
-                        let displayDate = getFormattedDate(record.date);
+                        let displayDate = getBeautifulDate(record.date);
+                        let displayTime = cleanTimeString(record.time); // အချိန်ကို ရှင်းလင်းမည်
                         
                         let itemDiv = document.createElement('div');
-                        itemDiv.className = 'record-item';
+                        itemDiv.className = 'record-item'; // ကတ်ပုံစံ ဒီဇိုင်းအသစ်
                         itemDiv.innerHTML = `
-                            <div class="record-title">
-                                <span>${record.customer}</span>
-                                <span class="record-amount">${amount.toLocaleString()} Ks</span>
+                            <div class="record-item-header">
+                                <span class="cust-name">👤 ${record.customer}</span>
+                                <span class="amt">${amount.toLocaleString()} Ks</span>
                             </div>
-                            <div class="record-detail">
-                                <span>📅 ${displayDate} (${record.time})<br>🛍️ ${record.items}</span>
+                            <div class="record-body">
+                                🛍️ <strong>Items:</strong> ${record.items}
+                            </div>
+                            <div class="record-footer">
+                                <span class="record-date-badge">🕒 ${displayDate} (${displayTime})</span>
                                 <button class="delete-record-btn" onclick="deleteSingleRecord(${record.row})">❌ Delete</button>
                             </div>
                         `;
@@ -433,6 +485,7 @@
         `;
         
         calculateTotal();
+        setCurrentDate(); // Back နှိပ်တိုင်း Date ကို အသစ်ပြန်ချိန်ပေးမည်
         window.scrollTo(0, 0); 
     }
 
@@ -497,4 +550,3 @@
 
 </body>
 </html>
-
