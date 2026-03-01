@@ -17,56 +17,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
-        /* Pull-to-Refresh & Loading Spinner Settings */
-        html, body {
-            overscroll-behavior-y: contain;
-            -webkit-overflow-scrolling: touch;
-        }
-
+        html, body { overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
         body { font-family: Arial, sans-serif; background-color: #fce4ec; margin: 0; padding: 10px; color: #333; }
         
-        /* Loading Spinner Animation */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .spinner { width: 20px; height: 20px; border: 3px solid #f8bbd0; border-top: 3px solid #d81b60; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; margin-right: 10px; }
+        #pull-indicator { text-align: center; height: 0; overflow: hidden; transition: height 0.2s ease; color: #d81b60; font-weight: bold; font-size: 13px; display: flex; align-items: center; justify-content: center; background-color: #fce4ec; }
 
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f8bbd0;
-            border-top: 3px solid #d81b60;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        #pull-indicator {
-            text-align: center; height: 0; overflow: hidden; transition: height 0.2s ease;
-            color: #d81b60; font-weight: bold; font-size: 13px; 
-            display: flex; align-items: center; justify-content: center;
-            background-color: #fce4ec;
-        }
-
-        /* UI Styles */
         .app-container { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding-bottom: 25px; max-width: 600px; margin: auto; position: relative; overflow: hidden; }
         
         .watermark { display: none; }
-        .app-container.exporting .watermark { 
-            display: flex; justify-content: center; align-items: center; 
-            position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); 
-            z-index: 0; pointer-events: none; opacity: 0.08; 
-        }
+        .app-container.exporting .watermark { display: flex; justify-content: center; align-items: center; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; opacity: 0.08; }
         .app-container.exporting .watermark img { width: 80%; max-width: 350px; height: auto; }
 
         .top-nav { max-width: 600px; margin: 0 auto 10px auto; text-align: right; }
         .report-btn { background: #d81b60; color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; box-shadow: 0 2px 5px rgba(216,27,96,0.2); }
-        
         .header { text-align: center; border-bottom: 2px solid #d81b60; padding-bottom: 12px; margin-bottom: 15px; z-index: 2; position: relative; }
         .header img.shop-logo { width: 100%; max-width: 250px; height: auto; border-radius: 8px; margin-bottom: 8px; }
         .header .shop-address { color: #555; font-size: 11px; margin-top: 5px; line-height: 1.5; }
-        
         #displayCurrentDate { text-align: right; font-size: 12px; font-weight: bold; color: #d81b60; margin-bottom: 6px; padding-right: 2px; }
 
         .input-group { display: flex; align-items: center; margin-bottom: 12px; z-index: 2; position: relative; }
@@ -81,7 +49,6 @@
         
         .remove-btn { background: #ff5252; color: white; border: none; border-radius: 4px; padding: 8px 10px; font-size: 12px; font-weight: bold; cursor: pointer; width: 100%; }
         .add-btn { width: 100%; background-color: #fce4ec; color: #d81b60; border: 2px dashed #d81b60; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; z-index: 2; position: relative; }
-        
         .summary-box { background: #fff0f4; padding: 12px; border-radius: 8px; margin-top: 15px; z-index: 2; position: relative; border: 1.5px solid #d81b60; }
         .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; color: #555; }
         .summary-row span { white-space: nowrap; font-weight: bold; }
@@ -101,7 +68,6 @@
         .controls-container { max-width: 600px; margin: 20px auto 0 auto; padding: 0 10px; }
         .print-btn { display: block; width: 100%; padding: 14px; background-color: #d81b60; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(216,27,96,0.2); }
         #loadingMsg { display: none; text-align: center; color: #d81b60; font-weight: bold; margin-top: 15px; font-size: 14px; }
-        
         .temp-text { flex: 1; text-align: right; font-size: 14px; color: #000; font-weight: bold; }
 
         #resultView { display: none; padding: 15px; max-width: 600px; margin: auto; min-height: 100vh; background-color: #fce4ec; }
@@ -141,10 +107,7 @@
     </div>
 
 <div id="mainView">
-    <div class="top-nav">
-        <button class="report-btn" onclick="openHistory()">📊 Online Sales Report</button>
-    </div>
-
+    <div class="top-nav"><button class="report-btn" onclick="openHistory()">📊 Online Sales Report</button></div>
     <div class="app-container" id="invoiceCard">
         <div class="watermark"><img src="logo.jpg" alt="Watermark"></div>
         <div class="header">
@@ -176,82 +139,55 @@
         </div>
         <div class="thank-you">~ Thank You For Shopping With May ~</div>
     </div>
-
-    <div class="controls-container">
-        <button type="button" class="print-btn" id="saveBtn" onclick="saveAsImage()">Save Invoice</button>
-        <div id="loadingMsg">Generating image... Please wait...</div>
-    </div>
+    <div class="controls-container"><button type="button" class="print-btn" id="saveBtn" onclick="saveAsImage()">Save Invoice</button><div id="loadingMsg">Generating image... Please wait...</div></div>
 </div>
 
 <div id="resultView">
-    <div class="result-card">
-        <img id="generatedImg" src="" alt="Invoice Image">
-        <br><br>
-        <button type="button" class="back-btn" onclick="goBackToMain()">« Go Back & Start New</button>
-    </div>
+    <div class="result-card"><img id="generatedImg" src=""><br><br><button type="button" class="back-btn" onclick="goBackToMain()">« Go Back & Start New</button></div>
 </div>
 
 <div id="historyView">
     <div class="history-card">
         <div class="history-header"><h2>Online Sales Report</h2><button class="close-history" onclick="closeHistory()">Close</button></div>
         <div class="filter-group"><input type="date" id="filterDate" onchange="loadHistory('date')"><input type="month" id="filterMonth" onchange="loadHistory('month')"></div>
-        <div style="text-align: center; margin-bottom: 15px;"><button onclick="loadHistory('all')" style="background: #888; color:white; border:none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 12px;">Show All Time</button></div>
+        <div style="text-align: center; margin-bottom: 15px;"><button onclick="loadHistory('all')" style="background: #888; color:white; border:none; padding: 8px 15px; border-radius: 4px; font-size: 12px;">Show All Time</button></div>
         <div class="total-sales-badge">Total Sales: <span id="historyTotalAmount">0</span> Ks</div>
         <div id="historyList"></div>
     </div>
 </div>
 
 <script>
-    // --- (၁) AUTO UPDATE VERSION ---
-    const APP_VERSION = "1.0.3"; 
+    const APP_VERSION = "1.0.4"; 
     function checkAppUpdate() {
         const storedVersion = localStorage.getItem('dressup_app_version');
-        if (storedVersion !== APP_VERSION) {
-            localStorage.setItem('dressup_app_version', APP_VERSION);
-            window.location.reload(true); 
-        }
+        if (storedVersion !== APP_VERSION) { localStorage.setItem('dressup_app_version', APP_VERSION); window.location.reload(true); }
     }
     checkAppUpdate();
 
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLgvYEDVw0mgftIaF0DgzCQapiMTPVuE_5eTCxRknJHE0_h-xJO5Zz1zwOu_DTY-KP/exec";
 
-    // --- (၂) PULL TO REFRESH LOGIC WITH SPINNER ---
     let touchStart = 0;
     const mainBody = document.getElementById('main-body');
     const pullIndicator = document.getElementById('pull-indicator');
     const pullText = document.getElementById('pull-text');
     const spinner = document.getElementById('spinner-icon');
 
-    mainBody.addEventListener('touchstart', (e) => {
-        if (window.scrollY === 0) touchStart = e.touches[0].pageY;
-    }, {passive: true});
-
+    mainBody.addEventListener('touchstart', (e) => { if (window.scrollY === 0) touchStart = e.touches[0].pageY; }, {passive: true});
     mainBody.addEventListener('touchmove', (e) => {
-        const touchMove = e.touches[0].pageY;
-        const pullDist = touchMove - touchStart;
-        if (window.scrollY === 0 && pullDist > 0 && pullDist < 150) {
+        const pullDist = e.touches[0].pageY - touchStart;
+        if (window.scrollY === 0 && pullDist > 0 && pullDist < 120) {
             pullIndicator.style.height = pullDist + 'px';
-            if (pullDist > 70) {
-                pullText.innerText = "Release to Update... 🔄";
-            } else {
-                pullText.innerText = "Pull down to Update... ↓";
-            }
+            pullText.innerText = pullDist > 70 ? "Release to Update... 🔄" : "Pull down to Update... ↓";
         }
     }, {passive: true});
-
     mainBody.addEventListener('touchend', (e) => {
         const pullDist = e.changedTouches[0].pageY - touchStart;
         if (window.scrollY === 0 && pullDist > 70) {
-            pullIndicator.style.height = '50px';
-            pullText.innerText = "Refreshing App...";
-            spinner.style.display = 'inline-block'; // Spinner ပေါ်စေရန်
+            pullIndicator.style.height = '50px'; pullText.innerText = "Refreshing App..."; spinner.style.display = 'inline-block';
             setTimeout(() => { window.location.reload(true); }, 600);
-        } else {
-            pullIndicator.style.height = '0px';
-        }
+        } else { pullIndicator.style.height = '0px'; }
     });
 
-    // --- LOGICS ---
     function setCurrentDate() {
         let now = new Date();
         document.getElementById('displayCurrentDate').innerText = "Date: " + now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -278,12 +214,10 @@
         tbody.appendChild(newRow);
         calculateTotal();
     }
-
     function removeItem(btn) { btn.closest('tr').remove(); calculateTotal(); }
 
     function saveRecordToOnline() {
-        let totalAmount = calculateTotal();
-        if(totalAmount === 0) return; 
+        let totalAmount = calculateTotal(); if(totalAmount === 0) return; 
         let customer = document.getElementById('custName').value || 'Guest';
         let note = document.getElementById('note').value.trim();
         if (note !== "") customer += ` (Note: ${note})`;
@@ -297,7 +231,7 @@
         let fd = new URLSearchParams();
         fd.append('action', 'insert');
         fd.append('date', new Date().toISOString().split('T')[0]);
-        fd.append('time', new Date().toLocaleTimeString());
+        fd.append('time', new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }));
         fd.append('customer', customer);
         fd.append('items', itemNames.join(' | '));
         fd.append('totalAmount', totalAmount);
@@ -311,18 +245,52 @@
         let listContainer = document.getElementById('historyList');
         let totalAmountEl = document.getElementById('historyTotalAmount');
         listContainer.innerHTML = '<div class="loading-text"><div class="spinner"></div> Loading Database... ⏳</div>';
+        
         fetch(SCRIPT_URL + "?t=" + new Date().getTime()).then(res => res.json()).then(history => {
             listContainer.innerHTML = '';
             let calcTotal = 0;
-            history.reverse().forEach(record => {
+            
+            // ရက်စွဲသန့်စင်ခြင်း Function
+            const cleanDate = (raw) => {
+                let d = new Date(raw);
+                if(isNaN(d.getTime())) return raw;
+                return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+            };
+
+            // အချိန်သန့်စင်ခြင်း Function (HH:MM AM/PM ပုံစံသာ ယူမည်)
+            const cleanTime = (raw) => {
+                if(!raw) return "";
+                let match = String(raw).match(/(\d{1,2}):(\d{2})(?::\d{2})?\s?(AM|PM)?/i);
+                if(match) return `${match[1]}:${match[2]} ${match[3] || ""}`;
+                return raw;
+            };
+
+            // ပစ္စည်းစျေးနှုန်း သန့်စင်ခြင်း
+            const formatPrice = (p) => {
+                let n = parseInt(p);
+                return isNaN(n) ? "" : n.toLocaleString() + " Ks";
+            };
+
+            // Filter ပြုလုပ်ခြင်း
+            let filtered = history;
+            if(filterType === 'date') {
+                let sel = document.getElementById('filterDate').value;
+                if(sel) filtered = history.filter(r => new Date(r.date).toISOString().split('T')[0] === sel);
+            } else if(filterType === 'month') {
+                let sel = document.getElementById('filterMonth').value;
+                if(sel) filtered = history.filter(r => new Date(r.date).toISOString().startsWith(sel));
+            }
+
+            filtered.reverse().forEach(record => {
                 calcTotal += parseFloat(record.totalAmount) || 0;
                 let itemsHtml = record.items.split(' | ').map(item => {
                     let parts = item.split(' ^ ');
-                    return `<div class="item-tag"><span class="item-tag-name">${parts[0]}</span><span class="item-tag-price">${parts[1] !== '0' ? parseInt(parts[1]).toLocaleString() + ' Ks' : ''}</span></div>`;
+                    return `<div class="item-tag"><span class="item-tag-name">${parts[0]}</span><span class="item-tag-price">${formatPrice(parts[1])}</span></div>`;
                 }).join('');
+                
                 let itemDiv = document.createElement('div');
                 itemDiv.className = 'record-item';
-                itemDiv.innerHTML = `<div class="record-item-header"><span class="cust-name">👤 ${record.customer}</span><span class="amt">${parseInt(record.totalAmount).toLocaleString()} Ks</span></div><div class="record-items-container">${itemsHtml}</div><div class="record-footer"><span class="record-date-badge">🕒 ${record.date} (${record.time})</span><button class="delete-record-btn" onclick="deleteSingleRecord(${record.row})">❌ Delete</button></div>`;
+                itemDiv.innerHTML = `<div class="record-item-header"><span class="cust-name">👤 ${record.customer}</span><span class="amt">${parseInt(record.totalAmount).toLocaleString()} Ks</span></div><div class="record-items-container">${itemsHtml}</div><div class="record-footer"><span class="record-date-badge">🕒 ${cleanDate(record.date)} (${cleanTime(record.time)})</span><button class="delete-record-btn" onclick="deleteSingleRecord(${record.row})">❌ Delete</button></div>`;
                 listContainer.appendChild(itemDiv);
             });
             totalAmountEl.innerText = calcTotal.toLocaleString();
@@ -350,17 +318,16 @@
             span.className = 'temp-text';
             let val = input.value || '0';
             if (input.id === 'deliFee') span.innerText = parseInt(val).toLocaleString() + ' Ks';
-            else if (input.classList.contains('qty')) span.innerText = val;
+            else if (input.classList.contains('qty')) { span.innerText = val; span.style.textAlign = 'center'; }
             else if (input.classList.contains('price')) span.innerText = parseInt(val).toLocaleString();
-            else span.innerText = val;
+            else { span.innerText = val; span.style.textAlign = 'left'; span.style.fontWeight = 'normal'; }
             input.parentNode.insertBefore(span, input);
             input.style.display = 'none';
         });
         setTimeout(() => {
             html2canvas(container, { scale: 2, backgroundColor: "#ffffff", useCORS: true }).then(canvas => {
                 document.getElementById('generatedImg').src = canvas.toDataURL('image/jpeg', 0.95);
-                document.getElementById('mainView').style.display = 'none';
-                document.getElementById('resultView').style.display = 'block';
+                document.getElementById('mainView').style.display = 'none'; document.getElementById('resultView').style.display = 'block';
                 window.scrollTo(0, 0); 
             });
         }, 500); 
