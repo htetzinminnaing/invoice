@@ -32,18 +32,28 @@
 
         .top-nav { max-width: 600px; margin: 0 auto 10px auto; text-align: right; }
         .report-btn { background: #d81b60; color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; box-shadow: 0 2px 5px rgba(216,27,96,0.2); }
+        
         .header { text-align: center; border-bottom: 2px solid #d81b60; padding-bottom: 12px; margin-bottom: 15px; z-index: 2; position: relative; }
-        .header img.shop-logo { width: 100%; max-width: 250px; height: auto; border-radius: 8px; margin-bottom: 8px; }
+        
+        /* Logo ကို Header Banner ပုံစံ အပြည့်ဖြစ်စေရန် ပြင်ဆင်ထားသော CSS */
+        .header img.shop-logo { 
+            width: 100%; 
+            height: 130px; 
+            object-fit: cover; 
+            object-position: center; 
+            border-radius: 8px; 
+            margin-bottom: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
         .header .shop-address { color: #555; font-size: 11px; margin-top: 5px; line-height: 1.5; }
         #displayCurrentDate { text-align: right; font-size: 13px; font-weight: bold; color: #d81b60; margin-bottom: 8px; padding-right: 2px; }
 
-        /* အပေါ်ပိုင်း Input များကို ပြန်လည်ကျဉ်းပေးထားပါသည် */
         .input-group { display: flex; align-items: center; margin-bottom: 10px; z-index: 2; position: relative; }
         .input-group label { width: 110px; min-width: 110px; font-weight: bold; color: #555; font-size: 14px; white-space: nowrap; flex-shrink: 0; }
         .input-group input { flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; background-color: #fafafa; box-sizing: border-box; }
         .input-group input:focus { border-color: #d81b60; outline: none; background-color: #fff; }
         
-        /* ဇယားကွက်များကို ကျယ်ဝန်းစေရန်နှင့် Font ကို ကြီးပေးထားပါသည် */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; z-index: 2; position: relative; }
         th { background-color: #fce4ec; color: #d81b60; padding: 12px 10px; text-align: left; font-size: 14px; border-radius: 4px 4px 0 0; white-space: nowrap; border: 1px solid #d81b60; }
         td { border-bottom: 1px solid #eee; border: 1px solid #f8bbd0; }
@@ -74,9 +84,7 @@
         .print-btn { display: block; width: 100%; padding: 14px; background-color: #d81b60; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(216,27,96,0.2); }
         #loadingMsg { display: none; text-align: center; color: #d81b60; font-weight: bold; margin-top: 15px; font-size: 14px; }
         
-        /* Screenshot ဖတ်သောအခါ Input များကို Text အဖြစ်ပြောင်းရန် */
         .temp-text { display: block; width: 100%; box-sizing: border-box; font-size: 15px; color: #000; }
-        /* အပေါ်ပိုင်း Input များအတွက် သီးသန့် Padding */
         .temp-text.header-text { padding: 8px 10px; } 
 
         #resultView { display: none; padding: 15px; max-width: 600px; margin: auto; min-height: 100vh; background-color: #fce4ec; }
@@ -93,7 +101,7 @@
         .filter-group input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 15px; }
         .filter-group button { background: #d81b60; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .total-sales-badge { background: #fff0f4; border: 1px dashed #d81b60; padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; color: #d81b60; margin-bottom: 15px; }
-        .record-item { background: #fffafb; border: 1px solid #f8bbd0; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+        .record-item { background: #fffafb; border: 1px solid #f8bbd0; border-radius: 8px; padding: 12px; margin-bottom: 12px; transition: opacity 0.3s ease; }
         .record-item-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed #f8bbd0; padding-bottom: 8px; margin-bottom: 10px; }
         .record-item-header .cust-name { font-weight: bold; font-size: 16px; color: #d81b60; flex: 1; word-break: break-word; padding-right: 10px; }
         .record-item-header .amt { font-weight: bold; font-size: 16px; color: #333; white-space: nowrap; }
@@ -166,7 +174,8 @@
 </div>
 
 <script>
-    const APP_VERSION = "1.0.11"; 
+    // --- Auto Update Version ---
+    const APP_VERSION = "1.0.12"; 
     function checkAppUpdate() {
         const storedVersion = localStorage.getItem('dressup_app_version');
         if (storedVersion !== APP_VERSION) { localStorage.setItem('dressup_app_version', APP_VERSION); window.location.reload(true); }
@@ -323,7 +332,8 @@
             }
 
             filtered.reverse().forEach(record => {
-                calcTotal += parseFloat(record.totalAmount) || 0;
+                let amount = parseFloat(record.totalAmount) || 0;
+                calcTotal += amount;
                 
                 let custNameDisplay = record.customer;
                 let noteDisplay = "";
@@ -357,7 +367,8 @@
                     headerHtml += `<div style="font-size: 13.5px; color: #d81b60; margin-bottom: 10px; font-style: italic;">📝 Note: ${noteDisplay}</div>`;
                 }
 
-                itemDiv.innerHTML = headerHtml + `<div class="record-items-container">${itemsHtml}</div><div class="record-footer"><span class="record-date-badge">🕒 ${cleanDateStr(record.date)} (${cleanTime(record.time)})</span><button class="delete-record-btn" onclick="deleteSingleRecord(${record.row})">❌ Delete</button></div>`;
+                // Instant Delete ကို onclick တွင် this ပါအောင် ပြင်ထားသည်
+                itemDiv.innerHTML = headerHtml + `<div class="record-items-container">${itemsHtml}</div><div class="record-footer"><span class="record-date-badge">🕒 ${cleanDateStr(record.date)} (${cleanTime(record.time)})</span><button class="delete-record-btn" onclick="deleteSingleRecord(${record.row}, this, ${amount})">❌ Delete</button></div>`;
                 listContainer.appendChild(itemDiv);
             });
             totalAmountEl.innerText = calcTotal.toLocaleString();
@@ -365,12 +376,33 @@
         });
     }
 
-    function deleteSingleRecord(rowId) {
+    // --- INSTANT DELETE LOGIC ---
+    function deleteSingleRecord(rowId, btnElement, amountToRemove) {
         if(confirm("Delete record?")) {
-            let fd = new URLSearchParams(); fd.append('action', 'delete'); fd.append('row', rowId);
+            // (၁) မျက်စိရှေ့မှ ချက်ချင်းဖျောက်ခြင်း (Optimistic Delete)
+            let recordItem = btnElement.closest('.record-item');
+            recordItem.style.opacity = '0.5';
+            recordItem.style.pointerEvents = 'none';
+            
+            let fd = new URLSearchParams(); 
+            fd.append('action', 'delete'); 
+            fd.append('row', rowId);
+            
+            // (၂) နောက်ကွယ်တွင် Google Sheet သို့ ပို့၍ ဖျက်ခိုင်းခြင်း
             fetch(SCRIPT_URL, { method: 'POST', body: fd }).then(() => {
-                let currentType = document.getElementById('filterMonth').value ? 'month' : (document.getElementById('filterDate').value ? 'date' : 'all');
-                loadHistory(currentType);
+                recordItem.remove(); // အောင်မြင်ပါက အပြီးတိုင်ဖျက်မည်
+                
+                // စုစုပေါင်းပမာဏကို ချက်ချင်းနှုတ်ပေးမည်
+                let totalAmountEl = document.getElementById('historyTotalAmount');
+                let currentTotal = parseInt(totalAmountEl.innerText.replace(/,/g, '')) || 0;
+                let newTotal = currentTotal - amountToRemove;
+                totalAmountEl.innerText = (newTotal > 0 ? newTotal : 0).toLocaleString();
+
+                // အကုန်ပျက်သွားပါက စာသားပြရန်
+                let listContainer = document.getElementById('historyList');
+                if (listContainer.children.length === 0) {
+                    listContainer.innerHTML = '<p style="text-align:center; color:#888; padding: 20px;">No sales records found for this date.</p>';
+                }
             });
         }
     }
