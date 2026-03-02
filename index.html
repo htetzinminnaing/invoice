@@ -20,6 +20,7 @@
         
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .spinner { width: 20px; height: 20px; border: 3px solid #f8bbd0; border-top: 3px solid #d81b60; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; margin-right: 10px; }
+        #pull-indicator { text-align: center; height: 0; overflow: hidden; transition: height 0.2s ease; color: #d81b60; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; background-color: #fce4ec; }
 
         /* --- Strict Login Screen CSS --- */
         #loginView { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 95vh; padding: 20px; }
@@ -33,7 +34,7 @@
         #loginError { color: red; font-size: 13px; margin-top: 10px; font-weight: bold; display: none; }
         .sync-status { font-size: 10px; color: #888; margin-top: 15px; font-style: italic; }
 
-        /* --- Main App CSS --- */
+        /* --- Main App UI (Restored to Original Premium) --- */
         .app-container { background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); padding-bottom: 25px; max-width: 600px; margin: auto; position: relative; overflow: hidden; }
         .watermark { display: none; }
         .app-container.exporting .watermark { display: flex; justify-content: center; align-items: center; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; opacity: 0.06; }
@@ -46,10 +47,12 @@
         .header img.shop-banner { width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto; }
         .header .shop-address { color: #555; font-size: 11px; margin-top: 5px; line-height: 1.5; }
         
+        /* RESTORED INPUT STYLE */
         .input-group { display: flex; align-items: flex-start; margin-bottom: 12px; }
         .input-group label { width: 125px; font-weight: 600; color: #666; font-size: 14px; padding-top: 10px; }
         .input-group input { flex: 1; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 15px; font-weight: bold; color: #222; background-color: #fafafa; }
         
+        /* RESTORED TABLE STYLE */
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th { background-color: #fce4ec; color: #d81b60; padding: 12px 10px; text-align: left; font-size: 14px; border: 1px solid #d81b60; }
         td { border: 1px solid #f8bbd0; }
@@ -61,14 +64,33 @@
         .summary-box { background: #fff0f4; padding: 15px; border-radius: 8px; margin-top: 20px; border: 1.5px solid #d81b60; }
         .total-row { display: flex; justify-content: space-between; font-size: 17px; font-weight: bold; color: #d81b60; margin-top: 10px; padding-top: 10px; border-top: 2px solid #d81b60; }
         
+        /* RESTORED REPORT VIEW (The requested fix) */
+        #historyView { display: none; padding: 10px; max-width: 600px; margin: auto; min-height: 100vh; background-color: #fce4ec; }
+        .history-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .total-sales-badge { background: #fff0f4; border: 1px dashed #d81b60; padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; color: #d81b60; margin-bottom: 15px; }
+        
+        .record-item { background: #fffafb; border: 1px solid #f8bbd0; border-radius: 8px; padding: 12px; margin-bottom: 12px; transition: opacity 0.3s ease; }
+        .record-item-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed #f8bbd0; padding-bottom: 8px; margin-bottom: 10px; }
+        .record-item-header .cust-name { font-weight: bold; font-size: 16px; color: #d81b60; flex: 1; word-break: break-word; padding-right: 10px; }
+        .record-item-header .amt { font-weight: bold; font-size: 16px; color: #333; white-space: nowrap; }
+        
+        .record-items-container { display: flex; flex-direction: column; gap: 6px; }
+        .item-tag { background: #fff; border: 1px solid #fce4ec; padding: 8px 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .item-tag-name { font-size: 14px; color: #444; font-weight: 500; }
+        .item-tag-name::before { content: "🛍️"; margin-right: 6px; }
+        .item-tag-price { color: #d81b60; font-weight: bold; font-size: 14px; }
+        
+        .record-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+        .record-date-badge { font-size: 12px; color: #666; font-weight: bold; background: #eee; padding: 4px 8px; border-radius: 4px; }
+        .delete-record-btn { background: #ff5252; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; }
+
         .temp-text { display: block; width: 100%; font-size: 15px; color: #000; font-weight: bold; }
         .temp-text.header-text { line-height: 1.4; border-bottom: 1px dotted #ccc; padding-bottom: 5px; }
 
-        #resultView, #historyView { display: none; padding: 15px; max-width: 600px; margin: auto; }
-        .result-card, .history-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        #resultView { display: none; padding: 15px; max-width: 600px; margin: auto; }
+        .result-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
         .result-card img { max-width: 100%; border-radius: 8px; margin-bottom: 20px; }
-        .back-btn { background: #555; color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; }
-        .record-item { background: #fffafb; border: 1px solid #f8bbd0; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+        .back-btn { background: #555; color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body id="main-body">
@@ -125,6 +147,11 @@
     <div id="historyView">
         <div class="history-card">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><h2 style="color:#d81b60;margin:0">Sales Report</h2><button class="report-btn" style="background:#555" onclick="closeHistory()">Close</button></div>
+            <div class="filter-group" style="display:flex; gap:10px; margin-bottom:15px;">
+                <input type="date" id="filterDate" onchange="loadHistory('date')" style="flex:1; padding:8px; border-radius:4px; border:1px solid #ddd;">
+                <button onclick="loadHistory('all')" style="background:#888; color:white; border:none; padding:8px 12px; border-radius:4px;">Show All</button>
+            </div>
+            <div class="total-sales-badge">Total Sales: <span id="historyTotalAmount">0</span> Ks</div>
             <div id="historyList"></div>
         </div>
     </div>
@@ -132,13 +159,11 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLgvYEDVw0mgftIaF0DgzCQapiMTPVuE_5eTCxRknJHE0_h-xJO5Zz1zwOu_DTY-KP/exec";
     
-    // --- Security Center ---
     let CURRENT_PASS = localStorage.getItem('dressup_global_pass') || "May123";
     let PASS_ROW_ID = null;
 
     window.onload = function() {
         setCurrentDate();
-        // Database မှ Password အသစ် ရှိ/မရှိ နောက်ကွယ်မှ စစ်မည်
         fetch(SCRIPT_URL + "?t=" + new Date().getTime())
             .then(res => res.json())
             .then(data => {
@@ -147,9 +172,9 @@
                     CURRENT_PASS = pRec.items;
                     PASS_ROW_ID = pRec.row;
                     localStorage.setItem('dressup_global_pass', CURRENT_PASS);
-                    document.getElementById('syncStatus').innerText = "✅ Password synchronized with server.";
+                    document.getElementById('syncStatus').innerText = "✅ Synchronized.";
                 }
-            }).catch(() => { document.getElementById('syncStatus').innerText = "⚠️ Offline mode: Using last known password."; });
+            }).catch(() => { document.getElementById('syncStatus').innerText = "⚠️ Offline mode."; });
 
         if (sessionStorage.getItem('dressup_auth') === 'open') {
             document.getElementById('loginView').style.display = 'none';
@@ -192,18 +217,49 @@
     function calculateTotal() { let s = 0; document.querySelectorAll('#itemsContainer tr').forEach(r => { s += (r.querySelector('.qty').value * r.querySelector('.price').value || 0); }); let d = parseInt(document.getElementById('deliFee').value || 0); document.getElementById('subTotal').innerText = s.toLocaleString(); document.getElementById('finalTotal').innerText = (s + d).toLocaleString(); return s + d; }
     function addItem() { let tr = document.createElement('tr'); tr.innerHTML = `<td><input type="text" class="itemName"></td><td><input type="number" class="qty" value="1" oninput="calculateTotal()"></td><td><input type="number" class="price" oninput="calculateTotal()"></td><td><button class="remove-btn" onclick="removeItem(this)">X</button></td>`; document.getElementById('itemsContainer').appendChild(tr); }
     function removeItem(btn) { btn.closest('tr').remove(); calculateTotal(); }
-    function openHistory() { document.getElementById('mainView').style.display = 'none'; document.getElementById('historyView').style.display = 'block'; loadHistory(); }
+    
+    function openHistory() { document.getElementById('mainView').style.display = 'none'; document.getElementById('historyView').style.display = 'block'; loadHistory('all'); }
     function closeHistory() { document.getElementById('historyView').style.display = 'none'; document.getElementById('mainView').style.display = 'block'; }
-    function loadHistory() {
+    
+    function loadHistory(filterType) {
         let list = document.getElementById('historyList'); list.innerHTML = 'Loading...';
         fetch(SCRIPT_URL + "?t=" + new Date().getTime()).then(res => res.json()).then(data => {
-            list.innerHTML = '';
-            data.filter(r => r.customer !== "SYS_PASS_KEY").reverse().forEach(r => {
+            list.innerHTML = ''; let total = 0;
+            let actualData = data.filter(r => r.customer !== "SYS_PASS_KEY");
+            
+            if(filterType === 'date') {
+                let sel = document.getElementById('filterDate').value;
+                actualData = actualData.filter(r => r.date === sel || r.date.includes(sel));
+            }
+
+            actualData.reverse().forEach(r => {
+                total += parseFloat(r.totalAmount);
+                let itemsStr = String(r.items);
+                let itemsArray = itemsStr.includes(' | ') ? itemsStr.split(' | ') : [itemsStr];
+                
+                let itemsHtml = itemsArray.map(item => {
+                    let parts = item.split(' ^ ');
+                    return `<div class="item-tag"><span class="item-tag-name">${parts[0]}</span><span class="item-tag-price">${parseInt(parts[1]).toLocaleString()} Ks</span></div>`;
+                }).join('');
+
                 let div = document.createElement('div'); div.className = 'record-item';
-                div.innerHTML = `<div style="display:flex;justify-content:space-between;font-weight:bold;color:#d81b60"><span>👤 ${r.customer}</span><span>${parseInt(r.totalAmount).toLocaleString()} Ks</span></div><div style="font-size:12px;margin:5px 0">${r.items}</div>`;
+                div.innerHTML = `<div class="record-item-header"><span class="cust-name">👤 ${r.customer}</span><span class="amt">${parseInt(r.totalAmount).toLocaleString()} Ks</span></div><div class="record-items-container">${itemsHtml}</div><div class="record-footer"><span class="record-date-badge">🕒 ${r.date} (${r.time})</span><button class="delete-record-btn" onclick="deleteSingleRecord(${r.row}, this, ${r.totalAmount})">❌ Delete</button></div>`;
                 list.appendChild(div);
             });
+            document.getElementById('historyTotalAmount').innerText = total.toLocaleString();
         });
+    }
+
+    function deleteSingleRecord(rowId, btn, amt) {
+        if(confirm("Delete record?")) {
+            let fd = new URLSearchParams(); fd.append('action', 'delete'); fd.append('row', rowId);
+            fetch(SCRIPT_URL, { method: 'POST', body: fd }).then(() => {
+                btn.closest('.record-item').remove();
+                let totalEl = document.getElementById('historyTotalAmount');
+                let current = parseInt(totalEl.innerText.replace(/,/g, ''));
+                totalEl.innerText = (current - amt).toLocaleString();
+            });
+        }
     }
 
     function saveAsImage() {
@@ -212,15 +268,6 @@
         fetch(SCRIPT_URL, { method: 'POST', body: fd });
         
         let card = document.getElementById('invoiceCard'); card.classList.add('exporting');
-        document.querySelectorAll('.header-input').forEach(i => {
-            if(i.value) { let s = document.createElement('span'); s.className = 'temp-text header-text'; s.innerText = i.value; i.parentNode.insertBefore(s, i); }
-            i.style.display = 'none';
-        });
-        document.querySelectorAll('.itemName, .qty, .price').forEach(i => {
-            let s = document.createElement('span'); s.className = 'temp-text'; s.innerText = i.value; i.parentNode.insertBefore(s, i); i.style.display = 'none';
-        });
-        document.querySelector('.thank-you').style.display = 'block';
-        
         html2canvas(card, { scale: 2 }).then(canvas => {
             document.getElementById('generatedImg').src = canvas.toDataURL('image/jpeg', 0.9);
             document.getElementById('mainView').style.display = 'none'; document.getElementById('resultView').style.display = 'block';
