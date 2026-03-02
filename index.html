@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     
     <link rel="apple-touch-icon" href="logo.jpg">
     <link rel="icon" type="image/jpeg" href="logo.jpg">
@@ -22,19 +20,18 @@
         
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .spinner { width: 20px; height: 20px; border: 3px solid #f8bbd0; border-top: 3px solid #d81b60; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; margin-right: 10px; }
-        #pull-indicator { text-align: center; height: 0; overflow: hidden; transition: height 0.2s ease; color: #d81b60; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; background-color: #fce4ec; }
 
-        /* --- Login Screen CSS --- */
+        /* --- Strict Login Screen CSS --- */
         #loginView { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 95vh; padding: 20px; }
         .login-card { background: #fff; padding: 35px 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(216,27,96,0.15); width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
-        .login-card img { width: 100%; max-width: 150px; border-radius: 50%; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .login-card h2 { color: #d81b60; margin: 0 0 20px 0; font-size: 22px; }
+        .login-card img { width: 100%; max-width: 140px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .login-card h2 { color: #d81b60; margin: 0 0 20px 0; font-size: 22px; font-weight: bold; }
         .login-input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #f8bbd0; border-radius: 8px; font-size: 18px; text-align: center; box-sizing: border-box; font-weight: bold; letter-spacing: 2px; }
         .login-input:focus { border-color: #d81b60; outline: none; background-color: #fffafb; }
-        .login-btn { width: 100%; padding: 14px; background: #d81b60; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(216,27,96,0.2); }
+        .login-btn { width: 100%; padding: 14px; background: #d81b60; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .login-btn:active { transform: scale(0.96); background: #c2185b; }
-        #loginError { color: red; font-size: 13px; margin: -5px 0 15px 0; font-weight: bold; display: none; }
-        #loginLoading { color: #d81b60; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 15px; }
+        #loginError { color: red; font-size: 13px; margin-top: 10px; font-weight: bold; display: none; }
+        .sync-status { font-size: 10px; color: #888; margin-top: 15px; font-style: italic; }
 
         /* --- Main App CSS --- */
         .app-container { background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); padding-bottom: 25px; max-width: 600px; margin: auto; position: relative; overflow: hidden; }
@@ -42,580 +39,194 @@
         .app-container.exporting .watermark { display: flex; justify-content: center; align-items: center; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; opacity: 0.06; }
         .app-container.exporting .watermark img { width: 90%; max-width: 400px; height: auto; }
 
-        .top-nav { max-width: 600px; margin: 0 auto 10px auto; text-align: right; display: flex; justify-content: flex-end; gap: 6px; flex-wrap: wrap; }
+        .top-nav { max-width: 600px; margin: 0 auto 10px auto; text-align: right; display: flex; justify-content: flex-end; gap: 6px; }
         .report-btn { background: #d81b60; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
         
-        .header { text-align: center; border-bottom: 2px solid #d81b60; padding-bottom: 12px; margin-bottom: 15px; z-index: 2; position: relative; }
-        .header img.shop-banner { width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .header { text-align: center; border-bottom: 2px solid #d81b60; padding-bottom: 12px; margin-bottom: 15px; }
+        .header img.shop-banner { width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto; }
+        .header .shop-address { color: #555; font-size: 11px; margin-top: 5px; line-height: 1.5; }
         
-        .info-top-bar { display: flex; justify-content: flex-end; margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
-        #displayCurrentDate { font-size: 13px; font-weight: bold; color: #d81b60; }
-
-        .input-group { display: flex; align-items: flex-start; margin-bottom: 12px; z-index: 2; position: relative; }
-        .input-group label { width: 125px; min-width: 125px; font-weight: 600; color: #666; font-size: 14px; padding-top: 10px; }
-        .input-group input { flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 15px; font-weight: bold; color: #222; background-color: #fafafa; transition: 0.3s; }
-        .input-group input:focus { border-color: #d81b60; outline: none; background-color: #fff; box-shadow: 0 0 5px rgba(216,27,96,0.1); }
+        .input-group { display: flex; align-items: flex-start; margin-bottom: 12px; }
+        .input-group label { width: 125px; font-weight: 600; color: #666; font-size: 14px; padding-top: 10px; }
+        .input-group input { flex: 1; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 15px; font-weight: bold; color: #222; background-color: #fafafa; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; z-index: 2; position: relative; }
-        th { background-color: #fce4ec; color: #d81b60; padding: 12px 10px; text-align: left; font-size: 14px; border-radius: 4px 4px 0 0; white-space: nowrap; border: 1px solid #d81b60; }
-        td { border-bottom: 1px solid #eee; border: 1px solid #f8bbd0; }
-        td input { width: 100%; padding: 14px 10px; border: none; border-radius: 4px; box-sizing: border-box; font-size: 15px; background: transparent; }
-        td input:focus { outline: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background-color: #fce4ec; color: #d81b60; padding: 12px 10px; text-align: left; font-size: 14px; border: 1px solid #d81b60; }
+        td { border: 1px solid #f8bbd0; }
+        td input { width: 100%; padding: 14px 10px; border: none; font-size: 15px; background: transparent; box-sizing: border-box; }
         
-        .remove-btn { background: #ff5252; color: white; border: none; border-radius: 4px; padding: 10px; font-size: 13px; font-weight: bold; cursor: pointer; width: 100%; }
-        .add-btn { width: 100%; background-color: #fce4ec; color: #d81b60; border: 2px dashed #d81b60; padding: 12px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 12px; z-index: 2; position: relative; transition: 0.2s; }
-        .add-btn:active { background-color: #f8bbd0; }
+        .remove-btn { background: #ff5252; color: white; border: none; border-radius: 4px; padding: 10px; font-size: 13px; cursor: pointer; }
+        .add-btn { width: 100%; background-color: #fce4ec; color: #d81b60; border: 2px dashed #d81b60; padding: 12px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 12px; }
         
-        .summary-box { background: #fff0f4; padding: 15px; border-radius: 8px; margin-top: 20px; z-index: 2; position: relative; border: 1.5px solid #d81b60; }
-        .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 15px; color: #555; }
-        .summary-row span { white-space: nowrap; font-weight: bold; }
-        .summary-row input { width: 100px; padding: 8px; text-align: right; border: 1px solid #ddd; border-radius: 4px; font-size: 15px; font-weight: bold; background: #fff; }
+        .summary-box { background: #fff0f4; padding: 15px; border-radius: 8px; margin-top: 20px; border: 1.5px solid #d81b60; }
         .total-row { display: flex; justify-content: space-between; font-size: 17px; font-weight: bold; color: #d81b60; margin-top: 10px; padding-top: 10px; border-top: 2px solid #d81b60; }
-        .total-row span { white-space: nowrap; }
         
-        .thank-you { display: block; margin-top: 25px; font-size: 15px; color: #d81b60; font-style: italic; text-align: center; font-weight: bold; display: none; }
+        .temp-text { display: block; width: 100%; font-size: 15px; color: #000; font-weight: bold; }
+        .temp-text.header-text { line-height: 1.4; border-bottom: 1px dotted #ccc; padding-bottom: 5px; }
 
-        .app-container.exporting { box-shadow: none; padding: 25px 20px; border: 2px solid #d81b60; border-radius: 12px; background: #fff; }
-        .app-container.exporting .header { margin-bottom: 10px; }
-        .app-container.exporting .input-group { border-bottom: 1px dotted #ccc; padding-bottom: 8px; margin-bottom: 8px; align-items: flex-start; }
-        .app-container.exporting .input-group label { color: #777; padding-top: 0; font-size: 13.5px; }
-        .app-container.exporting .add-btn, .app-container.exporting .remove-btn { display: none !important; }
-        .app-container.exporting th:last-child, .app-container.exporting td:last-child { display: none !important; }
-        .app-container.exporting .summary-row input { border: none; background: transparent; padding: 0; }
-        .app-container.exporting .total-row { border-top: 2px solid #d81b60 !important; }
-        .app-container.exporting .thank-you { display: block; }
-
-        .temp-text { display: block; width: 100%; box-sizing: border-box; font-size: 15px; color: #000; }
-        .temp-text.header-text { padding: 0; font-weight: bold; color: #111; word-break: break-word; line-height: 1.4; } 
-
-        .controls-container { max-width: 600px; margin: 20px auto 0 auto; padding: 0 10px; }
-        .print-btn { display: block; width: 100%; padding: 14px; background-color: #d81b60; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(216,27,96,0.2); transition: 0.2s; }
-        .print-btn:active { transform: scale(0.98); }
-        #loadingMsg { display: none; text-align: center; color: #d81b60; font-weight: bold; margin-top: 15px; font-size: 14px; }
-        
-        #resultView { display: none; padding: 15px; max-width: 600px; margin: auto; min-height: 100vh; background-color: #fce4ec; }
-        .result-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        .result-card img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .back-btn { background: #555; color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-
-        #historyView { display: none; padding: 10px; max-width: 600px; margin: auto; min-height: 100vh; background-color: #fce4ec; }
-        .history-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .history-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f8bbd0; padding-bottom: 10px; margin-bottom: 15px; }
-        .history-header h2 { color: #d81b60; margin: 0; font-size: 20px; }
-        .close-history { background: #555; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-        .filter-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .filter-group input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 15px; }
-        .filter-group button { background: #d81b60; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .total-sales-badge { background: #fff0f4; border: 1px dashed #d81b60; padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; color: #d81b60; margin-bottom: 15px; }
-        .record-item { background: #fffafb; border: 1px solid #f8bbd0; border-radius: 8px; padding: 12px; margin-bottom: 12px; transition: opacity 0.3s ease; }
-        .record-item-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed #f8bbd0; padding-bottom: 8px; margin-bottom: 10px; }
-        .record-item-header .cust-name { font-weight: bold; font-size: 16px; color: #d81b60; flex: 1; word-break: break-word; padding-right: 10px; }
-        .record-item-header .amt { font-weight: bold; font-size: 16px; color: #333; white-space: nowrap; }
-        .record-items-container { display: flex; flex-direction: column; gap: 6px; }
-        .item-tag { background: #fff; border: 1px solid #fce4ec; padding: 8px 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
-        .item-tag-name { font-size: 14px; color: #444; font-weight: 500; }
-        .item-tag-name::before { content: "🛍️"; margin-right: 6px; }
-        .item-tag-price { color: #d81b60; font-weight: bold; font-size: 14px; }
-        .record-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
-        .record-date-badge { font-size: 12px; color: #666; font-weight: bold; background: #eee; padding: 4px 8px; border-radius: 4px; }
-        .delete-record-btn { background: #ff5252; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        #resultView, #historyView { display: none; padding: 15px; max-width: 600px; margin: auto; }
+        .result-card, .history-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .result-card img { max-width: 100%; border-radius: 8px; margin-bottom: 20px; }
+        .back-btn { background: #555; color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; }
+        .record-item { background: #fffafb; border: 1px solid #f8bbd0; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
     </style>
 </head>
 <body id="main-body">
 
-    <div id="pull-indicator">
-        <div class="spinner" id="spinner-icon" style="display:none;"></div>
-        <span id="pull-text">Updating... ↓</span>
-    </div>
-
     <div id="loginView">
         <div class="login-card">
             <img src="logo.jpg" alt="Dressup Logo">
-            
-            <div id="loginLoading">
-                <div class="spinner" style="border-top-color: #d81b60;"></div>
-                <span>Connecting to Server... ⏳</span>
-            </div>
-
-            <div id="loginCardInner" style="display: none;">
-                <h2>App Locked</h2>
-                <input type="password" id="passInput" class="login-input" placeholder="Enter Passcode" autocomplete="off">
-                <p id="loginError">Incorrect Password! Try again.</p>
-                <button class="login-btn" onclick="verifyPassword()">Unlock App</button>
-            </div>
+            <h2>Dressup App Lock</h2>
+            <input type="password" id="passInput" class="login-input" placeholder="Enter Passcode" autocomplete="off">
+            <button class="login-btn" onclick="verifyPassword()">Unlock App</button>
+            <p id="loginError">❌ Wrong Password! Try again.</p>
+            <div id="syncStatus" class="sync-status">Checking for updated password...</div>
         </div>
         <p style="margin-top: 20px; font-size: 12px; color: #888;">&copy; Dressup By May</p>
     </div>
 
     <div id="mainView" style="display: none;">
         <div class="top-nav">
-            <button class="report-btn" onclick="lockApp()" style="background-color: #607d8b;">🔒 Lock App</button>
+            <button class="report-btn" onclick="lockApp()" style="background-color: #607d8b;">🔒 Lock</button>
             <button class="report-btn" onclick="changePassword()" style="background-color: #ff9800;">🔑 Pass</button>
             <button class="report-btn" onclick="openHistory()">📊 Report</button>
         </div>
         
         <div class="app-container" id="invoiceCard">
             <div class="watermark"><img src="logo.jpg" alt="Watermark"></div>
-            
             <div class="header">
-                <img src="banner.jpg" alt="Dressup By May Banner" class="shop-banner">
+                <img src="banner.jpg" alt="Banner" class="shop-banner">
+                <p class="shop-address">No.428(A), South Okkalapa, Yangon. <strong>Tel: +95 9 509 5013</strong></p>
             </div>
-
-            <div class="info-top-bar">
-                <div id="displayCurrentDate">Date: </div>
-            </div>
-
-            <div class="input-group"><label>Customer Name</label><input type="text" id="custName" class="header-input" placeholder="Enter name" autocomplete="off" onfocus="this.select()"></div>
-            <div class="input-group"><label>Phone Number</label><input type="text" id="phone" class="header-input" placeholder="09..." autocomplete="off" onfocus="this.select()"></div>
-            <div class="input-group"><label>Address</label><input type="text" id="address" class="header-input" placeholder="Delivery address" autocomplete="off" onfocus="this.select()"></div>
-            <div class="input-group"><label>Note</label><input type="text" id="note" class="header-input" placeholder="Remarks / Notes" autocomplete="off" onfocus="this.select()"></div>
-
+            <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: #d81b60;" id="displayCurrentDate">Date: </div>
+            <div class="input-group"><label>Customer Name</label><input type="text" id="custName" class="header-input"></div>
+            <div class="input-group"><label>Phone Number</label><input type="text" id="phone" class="header-input"></div>
+            <div class="input-group"><label>Address</label><input type="text" id="address" class="header-input"></div>
+            <div class="input-group"><label>Note</label><input type="text" id="note" class="header-input"></div>
             <table id="invoiceTable">
-                <thead><tr><th>Item Name</th><th style="width: 40px; text-align: center;">Qty</th><th style="width: 80px; text-align: right;">Price</th><th style="width: 30px;"></th></tr></thead>
-                <tbody id="itemsContainer">
-                    <tr>
-                        <td><input type="text" class="itemName" placeholder="e.g. Floral Dress" autocomplete="off"></td>
-                        <td><input type="number" class="qty" value="1" min="1" oninput="calculateTotal()" style="text-align: center;" autocomplete="off"></td>
-                        <td><input type="number" class="price" placeholder="0" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off"></td>
-                        <td><button type="button" class="remove-btn" onclick="removeItem(this)">X</button></td>
-                    </tr>
-                </tbody>
+                <thead><tr><th>Item Name</th><th style="width: 40px;">Qty</th><th style="width: 80px;">Price</th><th style="width: 30px;"></th></tr></thead>
+                <tbody id="itemsContainer"><tr><td><input type="text" class="itemName"></td><td><input type="number" class="qty" value="1" oninput="calculateTotal()"></td><td><input type="number" class="price" oninput="calculateTotal()"></td><td><button class="remove-btn" onclick="removeItem(this)">X</button></td></tr></tbody>
             </table>
-            <button type="button" class="add-btn" onclick="addItem()">+ Add Item</button>
+            <button class="add-btn" onclick="addItem()">+ Add Item</button>
             <div class="summary-box">
-                <div class="summary-row"><span>Subtotal:</span><span><span id="subTotal">0</span> Ks</span></div>
-                <div class="summary-row"><span>Delivery Fee:</span><input type="number" id="deliFee" placeholder="0" min="0" oninput="calculateTotal()" style="width: 90px; text-align: right;" autocomplete="off"></div>
+                <div style="display:flex;justify-content:space-between"><span>Subtotal:</span><span><span id="subTotal">0</span> Ks</span></div>
+                <div style="display:flex;justify-content:space-between;margin:10px 0"><span>Delivery Fee:</span><input type="number" id="deliFee" oninput="calculateTotal()" style="width:90px;text-align:right;"></div>
                 <div class="total-row"><span>Total:</span><span><span id="finalTotal">0</span> Ks</span></div>
             </div>
-            <div class="thank-you">~ Thank You For Shopping With May ~</div>
+            <div class="thank-you" style="text-align:center;margin-top:25px;color:#d81b60;font-style:italic;display:none;font-weight:bold;">~ Thank You For Shopping With May ~</div>
         </div>
-        <div class="controls-container"><button type="button" class="print-btn" id="saveBtn" onclick="saveAsImage()">Save Invoice</button><div id="loadingMsg">Generating image... Please wait...</div></div>
+        <button class="login-btn" style="width:100%;margin-top:20px;" onclick="saveAsImage()">Save Invoice</button>
     </div>
 
     <div id="resultView">
-        <div class="result-card"><img id="generatedImg" src=""><br><br><button type="button" class="back-btn" onclick="goBackToMain()">« Go Back & Start New</button></div>
+        <div class="result-card"><img id="generatedImg" src=""><br><br><button class="back-btn" onclick="goBackToMain()">« Create New Invoice</button></div>
     </div>
 
     <div id="historyView">
         <div class="history-card">
-            <div class="history-header"><h2>Online Sales Report</h2><button class="close-history" onclick="closeHistory()">Close</button></div>
-            <div class="filter-group"><input type="date" id="filterDate" onchange="loadHistory('date')"><input type="month" id="filterMonth" onchange="loadHistory('month')"></div>
-            <div style="text-align: center; margin-bottom: 15px;"><button onclick="loadHistory('all')" style="background: #888; color:white; border:none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 13px;">Show All Time</button></div>
-            <div class="total-sales-badge">Total Sales: <span id="historyTotalAmount">0</span> Ks</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><h2 style="color:#d81b60;margin:0">Sales Report</h2><button class="report-btn" style="background:#555" onclick="closeHistory()">Close</button></div>
             <div id="historyList"></div>
         </div>
     </div>
 
 <script>
-    const APP_VERSION = "1.0.23"; 
-    function checkAppUpdate() {
-        const storedVersion = localStorage.getItem('dressup_app_version');
-        if (storedVersion !== APP_VERSION) { 
-            sessionStorage.removeItem('dressup_auth');
-            localStorage.setItem('dressup_app_version', APP_VERSION); 
-            window.location.reload(true); 
-        }
-    }
-    checkAppUpdate();
-
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLgvYEDVw0mgftIaF0DgzCQapiMTPVuE_5eTCxRknJHE0_h-xJO5Zz1zwOu_DTY-KP/exec";
-
-    // ==========================================
-    //   CLOUD PASSWORD SYSTEM
-    // ==========================================
-    let GLOBAL_PASSWORD = "May123"; // Default Fallback
-    let GLOBAL_PASSWORD_ROW = null;
+    
+    // --- Security Center ---
+    let CURRENT_PASS = localStorage.getItem('dressup_global_pass') || "May123";
+    let PASS_ROW_ID = null;
 
     window.onload = function() {
         setCurrentDate();
-        
-        // Fetch Cloud Password from Google Sheet
-        fetch(SCRIPT_URL + "?t=" + new Date().getTime(), { cache: 'no-store' })
+        // Database မှ Password အသစ် ရှိ/မရှိ နောက်ကွယ်မှ စစ်မည်
+        fetch(SCRIPT_URL + "?t=" + new Date().getTime())
             .then(res => res.json())
             .then(data => {
-                // ရှာဖွေရေးကုတ်- "SYS_PASS_KEY" အမည်ဖြင့် မှတ်ထားသော Password ကိုရှာမည်
-                let passRecord = data.find(r => r.customer === "SYS_PASS_KEY");
-                if (passRecord) {
-                    GLOBAL_PASSWORD = passRecord.items;
-                    GLOBAL_PASSWORD_ROW = passRecord.row;
+                let pRec = data.find(r => r.customer === "SYS_PASS_KEY");
+                if(pRec) {
+                    CURRENT_PASS = pRec.items;
+                    PASS_ROW_ID = pRec.row;
+                    localStorage.setItem('dressup_global_pass', CURRENT_PASS);
+                    document.getElementById('syncStatus').innerText = "✅ Password synchronized with server.";
                 }
-                
-                document.getElementById('loginLoading').style.display = 'none';
-                
-                if (sessionStorage.getItem('dressup_auth') === 'locked_open') {
-                    document.getElementById('loginView').style.display = 'none';
-                    document.getElementById('mainView').style.display = 'block';
-                } else {
-                    document.getElementById('loginCardInner').style.display = 'block';
-                    document.getElementById('passInput').focus();
-                }
-            })
-            .catch(err => {
-                alert("Network error. Using default settings.");
-                document.getElementById('loginLoading').style.display = 'none';
-                document.getElementById('loginCardInner').style.display = 'block';
-            });
+            }).catch(() => { document.getElementById('syncStatus').innerText = "⚠️ Offline mode: Using last known password."; });
+
+        if (sessionStorage.getItem('dressup_auth') === 'open') {
+            document.getElementById('loginView').style.display = 'none';
+            document.getElementById('mainView').style.display = 'block';
+        }
     };
 
     function verifyPassword() {
-        let inputVal = document.getElementById('passInput').value;
-        
-        if (inputVal === GLOBAL_PASSWORD) {
-            sessionStorage.setItem('dressup_auth', 'locked_open');
+        if (document.getElementById('passInput').value === CURRENT_PASS) {
+            sessionStorage.setItem('dressup_auth', 'open');
             document.getElementById('loginView').style.display = 'none';
             document.getElementById('mainView').style.display = 'block';
-            document.getElementById('loginError').style.display = 'none';
-            document.getElementById('passInput').value = '';
         } else {
             document.getElementById('loginError').style.display = 'block';
         }
     }
 
-    function lockApp() {
-        sessionStorage.removeItem('dressup_auth');
-        window.location.reload(true);
-    }
+    function lockApp() { sessionStorage.removeItem('dressup_auth'); window.location.reload(); }
 
     function changePassword() {
-        let oldPass = prompt("လက်ရှိ Password ကို ရိုက်ထည့်ပါ:");
-        if (oldPass === null) return; 
-        
-        if (oldPass !== GLOBAL_PASSWORD) {
-            alert("❌ မှားယွင်းနေပါသည်။ (Incorrect Password)");
-            return;
-        }
-        
-        let newPass = prompt("Password အသစ်ကို ရိုက်ထည့်ပါ:");
-        if (!newPass || newPass.trim() === "") return;
-        
-        let confirmPass = prompt("Password အသစ်ကို ထပ်မံရိုက်ထည့်ပါ:");
-        if (newPass !== confirmPass) {
-            alert("❌ Password နှစ်ခု တူညီမှုမရှိပါ။ ပြန်လည်ကြိုးစားပါ။");
-            return;
-        }
-        
-        // Show Loading Overlay
-        document.getElementById('mainView').style.display = 'none';
-        document.getElementById('loginView').style.display = 'flex';
-        document.getElementById('loginCardInner').style.display = 'none';
-        let loadingEl = document.getElementById('loginLoading');
-        loadingEl.style.display = 'flex';
-        loadingEl.innerHTML = `<div class="spinner" style="border-top-color: #d81b60;"></div><span>Updating Password to Cloud... ⏳</span>`;
+        let oldP = prompt("Enter Current Password:");
+        if (oldP !== CURRENT_PASS) return alert("Wrong Password!");
+        let newP = prompt("Enter New Global Password:");
+        if (!newP || newP.trim().length < 4) return alert("Too short!");
 
-        const insertNewPass = () => {
-            let fd = new URLSearchParams();
-            fd.append('action', 'insert');
-            fd.append('date', '2099-12-31'); // Secret Date
-            fd.append('time', '00:00 AM');
-            fd.append('customer', 'SYS_PASS_KEY');
-            fd.append('items', newPass);
-            fd.append('totalAmount', 0);
-            
-            fetch(SCRIPT_URL, { method: 'POST', body: fd }).then(() => {
-                alert("✅ Password အောင်မြင်စွာ ပြောင်းလဲပြီးပါပြီ။ ကျေးဇူးပြု၍ App ကို ပြန်ဝင်ပါ။");
-                sessionStorage.removeItem('dressup_auth');
-                window.location.reload(true);
-            });
-        };
-
-        // If old password row exists, delete it first to keep database clean
-        if (GLOBAL_PASSWORD_ROW) {
-            let fdDel = new URLSearchParams();
-            fdDel.append('action', 'delete');
-            fdDel.append('row', GLOBAL_PASSWORD_ROW);
-            fetch(SCRIPT_URL, { method: 'POST', body: fdDel }).then(() => {
-                insertNewPass();
-            }).catch(() => insertNewPass());
-        } else {
-            insertNewPass();
-        }
-    }
-
-    // --- Pull to Refresh ---
-    let touchStart = 0;
-    const mainBody = document.getElementById('main-body');
-    const pullIndicator = document.getElementById('pull-indicator');
-    const pullText = document.getElementById('pull-text');
-    const spinner = document.getElementById('spinner-icon');
-
-    mainBody.addEventListener('touchstart', (e) => { if (window.scrollY === 0) touchStart = e.touches[0].pageY; }, {passive: true});
-    mainBody.addEventListener('touchmove', (e) => {
-        const pullDist = e.touches[0].pageY - touchStart;
-        if (window.scrollY === 0 && pullDist > 0 && pullDist < 120) {
-            pullIndicator.style.height = pullDist + 'px';
-            pullText.innerText = pullDist > 70 ? "Release to Update... 🔄" : "Pull down to Update... ↓";
-        }
-    }, {passive: true});
-    mainBody.addEventListener('touchend', (e) => {
-        const pullDist = e.changedTouches[0].pageY - touchStart;
-        if (window.scrollY === 0 && pullDist > 70) {
-            pullIndicator.style.height = '50px'; pullText.innerText = "Refreshing App..."; spinner.style.display = 'inline-block';
-            setTimeout(() => { window.location.reload(true); }, 600);
-        } else { pullIndicator.style.height = '0px'; }
-    });
-
-    function calculateTotal() {
-        let subTotal = 0;
-        document.querySelectorAll('#itemsContainer tr').forEach(row => {
-            let qty = row.querySelector('.qty').value || 0;
-            let price = row.querySelector('.price').value || 0;
-            subTotal += (qty * price);
-        });
-        let deliFee = parseInt(document.getElementById('deliFee').value || 0);
-        document.getElementById('subTotal').innerText = subTotal.toLocaleString();
-        document.getElementById('finalTotal').innerText = (subTotal + deliFee).toLocaleString();
-        return subTotal + deliFee;
-    }
-
-    function addItem() {
-        let tbody = document.getElementById('itemsContainer');
-        let newRow = document.createElement('tr');
-        newRow.innerHTML = `<td><input type="text" class="itemName" placeholder="e.g. Floral Dress" autocomplete="off"></td><td><input type="number" class="qty" value="1" min="1" oninput="calculateTotal()" style="text-align: center;" autocomplete="off"></td><td><input type="number" class="price" placeholder="0" min="0" oninput="calculateTotal()" style="text-align: right;" autocomplete="off"></td><td><button type="button" class="remove-btn" onclick="removeItem(this)">X</button></td>`;
-        tbody.appendChild(newRow);
-        calculateTotal();
-    }
-    function removeItem(btn) { btn.closest('tr').remove(); calculateTotal(); }
-
-    function saveRecordToOnline() {
-        let totalAmount = calculateTotal(); if(totalAmount === 0) return; 
-        let customer = document.getElementById('custName').value || 'Guest';
-        let note = document.getElementById('note').value.trim();
-        if (note !== "") customer += ` (Note: ${note})`;
-        let itemNames = [];
-        document.querySelectorAll('#itemsContainer tr').forEach(row => {
-            let nameInput = row.querySelector('.itemName');
-            if (nameInput && nameInput.value.trim() !== '') {
-                itemNames.push(`${row.querySelector('.qty').value}x ${nameInput.value.trim()} ^ ${row.querySelector('.price').value}`);
-            }
-        });
-        
-        let now = new Date();
-        let yyyy = now.getFullYear();
-        let mm = String(now.getMonth() + 1).padStart(2, '0');
-        let dd = String(now.getDate()).padStart(2, '0');
-        let localDateStr = `${yyyy}-${mm}-${dd}`;
-        let localTimeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-
+        alert("Updating global password... App will reload.");
         let fd = new URLSearchParams();
-        fd.append('action', 'insert');
-        fd.append('date', localDateStr); 
-        fd.append('time', localTimeStr);
-        fd.append('customer', customer);
-        fd.append('items', itemNames.join(' | '));
-        fd.append('totalAmount', totalAmount);
-        fetch(SCRIPT_URL, { method: 'POST', body: fd }).catch(err => console.error(err));
-    }
-
-    function openHistory() { 
-        document.getElementById('mainView').style.display = 'none'; 
-        document.getElementById('historyView').style.display = 'block'; 
-        let now = new Date();
-        let yyyy = now.getFullYear();
-        let mm = String(now.getMonth() + 1).padStart(2, '0');
-        let dd = String(now.getDate()).padStart(2, '0');
-        document.getElementById('filterDate').value = `${yyyy}-${mm}-${dd}`;
-        loadHistory('date'); 
-    }
-    function closeHistory() { document.getElementById('historyView').style.display = 'none'; document.getElementById('mainView').style.display = 'block'; }
-
-    function loadHistory(filterType) {
-        let listContainer = document.getElementById('historyList');
-        let totalAmountEl = document.getElementById('historyTotalAmount');
-        listContainer.innerHTML = '<div class="loading-text"><div class="spinner"></div> Loading Database... ⏳</div>';
+        fd.append('action', 'insert'); fd.append('customer', 'SYS_PASS_KEY'); fd.append('items', newP); fd.append('totalAmount', 0);
         
-        fetch(SCRIPT_URL + "?t=" + new Date().getTime()).then(res => res.json()).then(history => {
-            listContainer.innerHTML = '';
-            let calcTotal = 0;
-            
-            // Password Key ကို Report တွင် မပေါ်စေရန် ဖယ်ထုတ်ခြင်း
-            let actualHistory = history.filter(r => r.customer !== "SYS_PASS_KEY");
-
-            const cleanDateStr = (raw) => {
-                if (String(raw).match(/^\d{4}-\d{2}-\d{2}$/)) {
-                    let parts = String(raw).split('-');
-                    let d = new Date(parts[0], parts[1]-1, parts[2]);
-                    return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-                }
-                let d = new Date(raw);
-                if(!isNaN(d.getTime())) return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-                return raw;
-            };
-
-            const cleanTime = (raw) => {
-                if(!raw) return "";
-                let match = String(raw).match(/(\d{1,2}):(\d{2})(?::\d{2})?\s?(AM|PM)?/i);
-                if(match) return `${match[1]}:${match[2]} ${match[3] || ""}`;
-                return raw;
-            };
-
-            let filtered = actualHistory;
-            if(filterType === 'date') {
-                let sel = document.getElementById('filterDate').value; 
-                if(sel) {
-                    filtered = actualHistory.filter(r => {
-                        if (r.date === sel) return true;
-                        let rDate = new Date(r.date);
-                        if(isNaN(rDate.getTime())) return false;
-                        let yyyy = rDate.getFullYear();
-                        let mm = String(rDate.getMonth() + 1).padStart(2, '0');
-                        let dd = String(rDate.getDate()).padStart(2, '0');
-                        return `${yyyy}-${mm}-${dd}` === sel;
-                    });
-                }
-            } else if(filterType === 'month') {
-                let sel = document.getElementById('filterMonth').value;
-                if(sel) {
-                    filtered = actualHistory.filter(r => {
-                        if (r.date.startsWith(sel)) return true;
-                        let rDate = new Date(r.date);
-                        if(isNaN(rDate.getTime())) return false;
-                        let yyyy = rDate.getFullYear();
-                        let mm = String(rDate.getMonth() + 1).padStart(2, '0');
-                        return `${yyyy}-${mm}` === sel;
-                    });
-                }
-            }
-
-            filtered.reverse().forEach(record => {
-                let amount = parseFloat(record.totalAmount) || 0;
-                calcTotal += amount;
-                
-                let custNameDisplay = record.customer;
-                let noteDisplay = "";
-                if (custNameDisplay.includes(" (Note: ")) {
-                    let parts = custNameDisplay.split(" (Note: ");
-                    custNameDisplay = parts[0];
-                    noteDisplay = parts[1].replace(/\)$/, '');
-                }
-
-                let itemsStr = String(record.items);
-                let itemsArray = itemsStr.includes(' | ') ? itemsStr.split(' | ') : (itemsStr.includes(',') ? itemsStr.split(',') : [itemsStr]);
-                
-                let itemsHtml = itemsArray.map(item => { 
-                    item = item.trim();
-                    if(item === '') return '';
-                    let parts = item.split(' ^ ');
-                    let name = parts[0];
-                    let priceVal = parseInt(parts[1]);
-                    let price = (!isNaN(priceVal) && priceVal !== 0) ? priceVal.toLocaleString() + " Ks" : "";
-                    return `<div class="item-tag"><span class="item-tag-name">${name}</span><span class="item-tag-price">${price}</span></div>`; 
-                }).join('');
-                
-                let itemDiv = document.createElement('div');
-                itemDiv.className = 'record-item';
-                
-                let headerHtml = `<div class="record-item-header" style="margin-bottom: ${noteDisplay ? '4px' : '10px'};">
-                    <span class="cust-name">👤 ${custNameDisplay}</span>
-                    <span class="amt">${parseInt(record.totalAmount).toLocaleString()} Ks</span>
-                </div>`;
-                if (noteDisplay) {
-                    headerHtml += `<div style="font-size: 13.5px; color: #d81b60; margin-bottom: 10px; font-style: italic;">📝 Note: ${noteDisplay}</div>`;
-                }
-
-                itemDiv.innerHTML = headerHtml + `<div class="record-items-container">${itemsHtml}</div><div class="record-footer"><span class="record-date-badge">🕒 ${cleanDateStr(record.date)} (${cleanTime(record.time)})</span><button class="delete-record-btn" onclick="deleteSingleRecord(${record.row}, this, ${amount})">❌ Delete</button></div>`;
-                listContainer.appendChild(itemDiv);
-            });
-            totalAmountEl.innerText = calcTotal.toLocaleString();
-            if(filtered.length === 0) listContainer.innerHTML = '<p style="text-align:center; color:#888; padding: 20px;">No sales records found for this date.</p>';
-        });
-    }
-
-    function deleteSingleRecord(rowId, btnElement, amountToRemove) {
-        if(confirm("Delete record?")) {
-            let recordItem = btnElement.closest('.record-item');
-            recordItem.style.opacity = '0.5';
-            recordItem.style.pointerEvents = 'none';
-            
-            let fd = new URLSearchParams(); 
-            fd.append('action', 'delete'); 
-            fd.append('row', rowId);
-            
-            fetch(SCRIPT_URL, { method: 'POST', body: fd }).then(() => {
-                recordItem.remove(); 
-                let totalAmountEl = document.getElementById('historyTotalAmount');
-                let currentTotal = parseInt(totalAmountEl.innerText.replace(/,/g, '')) || 0;
-                let newTotal = currentTotal - amountToRemove;
-                totalAmountEl.innerText = (newTotal > 0 ? newTotal : 0).toLocaleString();
-
-                let listContainer = document.getElementById('historyList');
-                if (listContainer.children.length === 0) {
-                    listContainer.innerHTML = '<p style="text-align:center; color:#888; padding: 20px;">No sales records found for this date.</p>';
-                }
-            });
+        if (PASS_ROW_ID) {
+            let fdDel = new URLSearchParams(); fdDel.append('action', 'delete'); fdDel.append('row', PASS_ROW_ID);
+            fetch(SCRIPT_URL, { method: 'POST', body: fdDel }).then(() => fetch(SCRIPT_URL, { method: 'POST', body: fd }).then(() => lockApp()));
+        } else {
+            fetch(SCRIPT_URL, { method: 'POST', body: fd }).then(() => lockApp());
         }
     }
 
-    function goBackToMain() { location.reload(true); }
+    // --- Core Functions ---
+    function setCurrentDate() { document.getElementById('displayCurrentDate').innerText = "Date: " + new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }); }
+    function calculateTotal() { let s = 0; document.querySelectorAll('#itemsContainer tr').forEach(r => { s += (r.querySelector('.qty').value * r.querySelector('.price').value || 0); }); let d = parseInt(document.getElementById('deliFee').value || 0); document.getElementById('subTotal').innerText = s.toLocaleString(); document.getElementById('finalTotal').innerText = (s + d).toLocaleString(); return s + d; }
+    function addItem() { let tr = document.createElement('tr'); tr.innerHTML = `<td><input type="text" class="itemName"></td><td><input type="number" class="qty" value="1" oninput="calculateTotal()"></td><td><input type="number" class="price" oninput="calculateTotal()"></td><td><button class="remove-btn" onclick="removeItem(this)">X</button></td>`; document.getElementById('itemsContainer').appendChild(tr); }
+    function removeItem(btn) { btn.closest('tr').remove(); calculateTotal(); }
+    function openHistory() { document.getElementById('mainView').style.display = 'none'; document.getElementById('historyView').style.display = 'block'; loadHistory(); }
+    function closeHistory() { document.getElementById('historyView').style.display = 'none'; document.getElementById('mainView').style.display = 'block'; }
+    function loadHistory() {
+        let list = document.getElementById('historyList'); list.innerHTML = 'Loading...';
+        fetch(SCRIPT_URL + "?t=" + new Date().getTime()).then(res => res.json()).then(data => {
+            list.innerHTML = '';
+            data.filter(r => r.customer !== "SYS_PASS_KEY").reverse().forEach(r => {
+                let div = document.createElement('div'); div.className = 'record-item';
+                div.innerHTML = `<div style="display:flex;justify-content:space-between;font-weight:bold;color:#d81b60"><span>👤 ${r.customer}</span><span>${parseInt(r.totalAmount).toLocaleString()} Ks</span></div><div style="font-size:12px;margin:5px 0">${r.items}</div>`;
+                list.appendChild(div);
+            });
+        });
+    }
 
     function saveAsImage() {
-        saveRecordToOnline();
-        let container = document.getElementById('invoiceCard');
-        document.getElementById('saveBtn').style.display = 'none';
-        document.getElementById('loadingMsg').style.display = 'block';
-        container.classList.add('exporting');
+        let items = []; document.querySelectorAll('#itemsContainer tr').forEach(r => { let n = r.querySelector('.itemName').value; if(n) items.push(`${r.querySelector('.qty').value}x ${n} ^ ${r.querySelector('.price').value}`); });
+        let fd = new URLSearchParams(); fd.append('action', 'insert'); fd.append('date', new Date().toISOString().split('T')[0]); fd.append('time', new Date().toLocaleTimeString()); fd.append('customer', document.getElementById('custName').value || 'Guest'); fd.append('items', items.join(' | ')); fd.append('totalAmount', calculateTotal());
+        fetch(SCRIPT_URL, { method: 'POST', body: fd });
         
-        let inputs = container.querySelectorAll('input');
-        
-        inputs.forEach(input => {
-            let span = document.createElement('span');
-            let val = input.value.trim();
-            
-            if (input.id === 'deliFee') {
-                let deliVal = parseInt(val) || 0;
-                span.innerText = deliVal === 0 ? '0 Ks' : deliVal.toLocaleString() + ' Ks';
-                span.style.color = '#555';
-                span.style.fontWeight = 'bold';
-                span.style.display = 'inline-block';
-                span.style.textAlign = 'right';
-                input.parentNode.insertBefore(span, input);
-                input.style.display = 'none';
-            } else if (input.classList.contains('header-input')) {
-                if (val === '') {
-                    input.closest('.input-group').style.display = 'none';
-                } else {
-                    span.className = 'temp-text header-text';
-                    span.innerText = val; 
-                    input.parentNode.insertBefore(span, input);
-                    input.style.display = 'none';
-                }
-            } else if (input.classList.contains('qty')) { 
-                span.className = 'temp-text';
-                span.innerText = val || ' '; 
-                span.style.textAlign = 'center'; 
-                span.style.display = 'block';
-                span.style.padding = '14px 10px'; 
-                input.parentNode.insertBefore(span, input);
-                input.style.display = 'none';
-            } else if (input.classList.contains('price')) { 
-                span.className = 'temp-text';
-                span.innerText = (val === '' || isNaN(parseInt(val))) ? '0' : parseInt(val).toLocaleString(); 
-                span.style.textAlign = 'right'; 
-                span.style.display = 'block';
-                span.style.padding = '14px 10px'; 
-                input.parentNode.insertBefore(span, input);
-                input.style.display = 'none';
-            } else { 
-                span.className = 'temp-text';
-                span.innerText = val || ' '; 
-                span.style.textAlign = 'left'; 
-                span.style.display = 'block';
-                span.style.padding = '14px 10px'; 
-                input.parentNode.insertBefore(span, input);
-                input.style.display = 'none';
-            }
+        let card = document.getElementById('invoiceCard'); card.classList.add('exporting');
+        document.querySelectorAll('.header-input').forEach(i => {
+            if(i.value) { let s = document.createElement('span'); s.className = 'temp-text header-text'; s.innerText = i.value; i.parentNode.insertBefore(s, i); }
+            i.style.display = 'none';
         });
-
-        setTimeout(() => {
-            html2canvas(container, { scale: 2, backgroundColor: "#ffffff", useCORS: true }).then(canvas => {
-                document.querySelectorAll('.input-group').forEach(grp => grp.style.display = '');
-                
-                document.getElementById('generatedImg').src = canvas.toDataURL('image/jpeg', 0.95);
-                document.getElementById('mainView').style.display = 'none'; 
-                document.getElementById('resultView').style.display = 'block';
-                window.scrollTo(0, 0); 
-            });
-        }, 500); 
+        document.querySelectorAll('.itemName, .qty, .price').forEach(i => {
+            let s = document.createElement('span'); s.className = 'temp-text'; s.innerText = i.value; i.parentNode.insertBefore(s, i); i.style.display = 'none';
+        });
+        document.querySelector('.thank-you').style.display = 'block';
+        
+        html2canvas(card, { scale: 2 }).then(canvas => {
+            document.getElementById('generatedImg').src = canvas.toDataURL('image/jpeg', 0.9);
+            document.getElementById('mainView').style.display = 'none'; document.getElementById('resultView').style.display = 'block';
+        });
     }
+    function goBackToMain() { window.location.reload(); }
 </script>
 </body>
 </html>
