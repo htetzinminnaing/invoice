@@ -35,16 +35,8 @@
         
         .header { text-align: center; border-bottom: 2px solid #d81b60; padding-bottom: 12px; margin-bottom: 15px; z-index: 2; position: relative; }
         
-        /* Logo ကို Header Banner ပုံစံ အပြည့်ဖြစ်စေရန် ပြင်ဆင်ထားသော CSS */
-        .header img.shop-logo { 
-            width: 100%; 
-            height: 130px; 
-            object-fit: cover; 
-            object-position: center; 
-            border-radius: 8px; 
-            margin-bottom: 8px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+        /* Logo ကို မူလအတိုင်း အချိုးအစားမပျက် သပ်ရပ်စွာ ပြန်ထားပေးပါသည် */
+        .header img.shop-logo { width: 100%; max-width: 250px; height: auto; border-radius: 8px; margin-bottom: 8px; }
         
         .header .shop-address { color: #555; font-size: 11px; margin-top: 5px; line-height: 1.5; }
         #displayCurrentDate { text-align: right; font-size: 13px; font-weight: bold; color: #d81b60; margin-bottom: 8px; padding-right: 2px; }
@@ -175,7 +167,7 @@
 
 <script>
     // --- Auto Update Version ---
-    const APP_VERSION = "1.0.12"; 
+    const APP_VERSION = "1.0.13"; 
     function checkAppUpdate() {
         const storedVersion = localStorage.getItem('dressup_app_version');
         if (storedVersion !== APP_VERSION) { localStorage.setItem('dressup_app_version', APP_VERSION); window.location.reload(true); }
@@ -184,6 +176,7 @@
 
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLgvYEDVw0mgftIaF0DgzCQapiMTPVuE_5eTCxRknJHE0_h-xJO5Zz1zwOu_DTY-KP/exec";
 
+    // --- Pull to Refresh ---
     let touchStart = 0;
     const mainBody = document.getElementById('main-body');
     const pullIndicator = document.getElementById('pull-indicator');
@@ -367,7 +360,6 @@
                     headerHtml += `<div style="font-size: 13.5px; color: #d81b60; margin-bottom: 10px; font-style: italic;">📝 Note: ${noteDisplay}</div>`;
                 }
 
-                // Instant Delete ကို onclick တွင် this ပါအောင် ပြင်ထားသည်
                 itemDiv.innerHTML = headerHtml + `<div class="record-items-container">${itemsHtml}</div><div class="record-footer"><span class="record-date-badge">🕒 ${cleanDateStr(record.date)} (${cleanTime(record.time)})</span><button class="delete-record-btn" onclick="deleteSingleRecord(${record.row}, this, ${amount})">❌ Delete</button></div>`;
                 listContainer.appendChild(itemDiv);
             });
@@ -376,10 +368,8 @@
         });
     }
 
-    // --- INSTANT DELETE LOGIC ---
     function deleteSingleRecord(rowId, btnElement, amountToRemove) {
         if(confirm("Delete record?")) {
-            // (၁) မျက်စိရှေ့မှ ချက်ချင်းဖျောက်ခြင်း (Optimistic Delete)
             let recordItem = btnElement.closest('.record-item');
             recordItem.style.opacity = '0.5';
             recordItem.style.pointerEvents = 'none';
@@ -388,17 +378,14 @@
             fd.append('action', 'delete'); 
             fd.append('row', rowId);
             
-            // (၂) နောက်ကွယ်တွင် Google Sheet သို့ ပို့၍ ဖျက်ခိုင်းခြင်း
             fetch(SCRIPT_URL, { method: 'POST', body: fd }).then(() => {
-                recordItem.remove(); // အောင်မြင်ပါက အပြီးတိုင်ဖျက်မည်
+                recordItem.remove(); 
                 
-                // စုစုပေါင်းပမာဏကို ချက်ချင်းနှုတ်ပေးမည်
                 let totalAmountEl = document.getElementById('historyTotalAmount');
                 let currentTotal = parseInt(totalAmountEl.innerText.replace(/,/g, '')) || 0;
                 let newTotal = currentTotal - amountToRemove;
                 totalAmountEl.innerText = (newTotal > 0 ? newTotal : 0).toLocaleString();
 
-                // အကုန်ပျက်သွားပါက စာသားပြရန်
                 let listContainer = document.getElementById('historyList');
                 if (listContainer.children.length === 0) {
                     listContainer.innerHTML = '<p style="text-align:center; color:#888; padding: 20px;">No sales records found for this date.</p>';
