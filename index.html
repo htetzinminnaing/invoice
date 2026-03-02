@@ -34,6 +34,7 @@
         .login-btn { width: 100%; padding: 14px; background: #d81b60; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(216,27,96,0.2); }
         .login-btn:active { transform: scale(0.96); background: #c2185b; }
         #loginError { color: red; font-size: 13px; margin: -5px 0 15px 0; font-weight: bold; display: none; }
+        #loginLoading { color: #d81b60; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 15px; }
 
         /* --- Main App CSS --- */
         .app-container { background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); padding-bottom: 25px; max-width: 600px; margin: auto; position: relative; overflow: hidden; }
@@ -130,17 +131,25 @@
     <div id="loginView">
         <div class="login-card">
             <img src="logo.jpg" alt="Dressup Logo">
-            <h2>App Locked</h2>
-            <input type="password" id="passInput" class="login-input" placeholder="Enter Passcode" autocomplete="off">
-            <p id="loginError">Incorrect Password! Try again.</p>
-            <button class="login-btn" onclick="verifyPassword()">Unlock App</button>
+            
+            <div id="loginLoading">
+                <div class="spinner" style="border-top-color: #d81b60;"></div>
+                <span>Connecting to Server... ⏳</span>
+            </div>
+
+            <div id="loginCardInner" style="display: none;">
+                <h2>App Locked</h2>
+                <input type="password" id="passInput" class="login-input" placeholder="Enter Passcode" autocomplete="off">
+                <p id="loginError">Incorrect Password! Try again.</p>
+                <button class="login-btn" onclick="verifyPassword()">Unlock App</button>
+            </div>
         </div>
         <p style="margin-top: 20px; font-size: 12px; color: #888;">&copy; Dressup By May</p>
     </div>
 
     <div id="mainView" style="display: none;">
         <div class="top-nav">
-            <button class="report-btn" onclick="lockApp()" style="background-color: #607d8b;">🔒 Lock</button>
+            <button class="report-btn" onclick="lockApp()" style="background-color: #607d8b;">🔒 Lock App</button>
             <button class="report-btn" onclick="changePassword()" style="background-color: #ff9800;">🔑 Pass</button>
             <button class="report-btn" onclick="openHistory()">📊 Report</button>
         </div>
@@ -198,42 +207,61 @@
     </div>
 
 <script>
-    // --- Auto Update Version ---
-    const APP_VERSION = "1.0.20"; 
+    const APP_VERSION = "1.0.23"; 
     function checkAppUpdate() {
         const storedVersion = localStorage.getItem('dressup_app_version');
         if (storedVersion !== APP_VERSION) { 
+            sessionStorage.removeItem('dressup_auth');
             localStorage.setItem('dressup_app_version', APP_VERSION); 
             window.location.reload(true); 
         }
     }
     checkAppUpdate();
 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLgvYEDVw0mgftIaF0DgzCQapiMTPVuE_5eTCxRknJHE0_h-xJO5Zz1zwOu_DTY-KP/exec";
+
     // ==========================================
-    //   PASSWORD SYSTEM (Dynamic)
+    //   CLOUD PASSWORD SYSTEM
     // ==========================================
-    
-    // App ကို ပထမဆုံးဖွင့်ချိန်တွင် Default Password ကို ဝင်ထည့်ပေးမည်
-    if (!localStorage.getItem('app_custom_password')) {
-        localStorage.setItem('app_custom_password', 'May123'); 
-    }
+    let GLOBAL_PASSWORD = "May123"; // Default Fallback
+    let GLOBAL_PASSWORD_ROW = null;
 
     window.onload = function() {
         setCurrentDate();
-        if (localStorage.getItem('dressup_auth') === 'locked_open') {
-            document.getElementById('loginView').style.display = 'none';
-            document.getElementById('mainView').style.display = 'block';
-        } else {
-            document.getElementById('passInput').focus();
-        }
+        
+        // Fetch Cloud Password from Google Sheet
+        fetch(SCRIPT_URL + "?t=" + new Date().getTime(), { cache: 'no-store' })
+            .then(res => res.json())
+            .then(data => {
+                // ရှာဖွေရေးကုတ်- "SYS_PASS_KEY" အမည်ဖြင့် မှတ်ထားသော Password ကိုရှာမည်
+                let passRecord = data.find(r => r.customer === "SYS_PASS_KEY");
+                if (passRecord) {
+                    GLOBAL_PASSWORD = passRecord.items;
+                    GLOBAL_PASSWORD_ROW = passRecord.row;
+                }
+                
+                document.getElementById('loginLoading').style.display = 'none';
+                
+                if (sessionStorage.getItem('dressup_auth') === 'locked_open') {
+                    document.getElementById('loginView').style.display = 'none';
+                    document.getElementById('mainView').style.display = 'block';
+                } else {
+                    document.getElementById('loginCardInner').style.display = 'block';
+                    document.getElementById('passInput').focus();
+                }
+            })
+            .catch(err => {
+                alert("Network error. Using default settings.");
+                document.getElementById('loginLoading').style.display = 'none';
+                document.getElementById('loginCardInner').style.display = 'block';
+            });
     };
 
     function verifyPassword() {
         let inputVal = document.getElementById('passInput').value;
-        let correctPass = localStorage.getItem('app_custom_password');
         
-        if (inputVal === correctPass) {
-            localStorage.setItem('dressup_auth', 'locked_open');
+        if (inputVal === GLOBAL_PASSWORD) {
+            sessionStorage.setItem('dressup_auth', 'locked_open');
             document.getElementById('loginView').style.display = 'none';
             document.getElementById('mainView').style.display = 'block';
             document.getElementById('loginError').style.display = 'none';
@@ -244,24 +272,21 @@
     }
 
     function lockApp() {
-        localStorage.removeItem('dressup_auth');
+        sessionStorage.removeItem('dressup_auth');
         window.location.reload(true);
     }
 
-    // Password ပြောင်းရန် Function
     function changePassword() {
-        let currentPass = localStorage.getItem('app_custom_password');
-        
         let oldPass = prompt("လက်ရှိ Password ကို ရိုက်ထည့်ပါ:");
-        if (oldPass === null) return; // Cancel နှိပ်လျှင် ရပ်မည်
+        if (oldPass === null) return; 
         
-        if (oldPass !== currentPass) {
+        if (oldPass !== GLOBAL_PASSWORD) {
             alert("❌ မှားယွင်းနေပါသည်။ (Incorrect Password)");
             return;
         }
         
         let newPass = prompt("Password အသစ်ကို ရိုက်ထည့်ပါ:");
-        if (newPass === null || newPass.trim() === "") return;
+        if (!newPass || newPass.trim() === "") return;
         
         let confirmPass = prompt("Password အသစ်ကို ထပ်မံရိုက်ထည့်ပါ:");
         if (newPass !== confirmPass) {
@@ -269,10 +294,42 @@
             return;
         }
         
-        localStorage.setItem('app_custom_password', newPass);
-        alert("✅ Password အောင်မြင်စွာ ပြောင်းလဲပြီးပါပြီ။ နောက်တစ်ကြိမ် App ဖွင့်လျှင် Password အသစ်ကို အသုံးပြုပါ။");
-    }
+        // Show Loading Overlay
+        document.getElementById('mainView').style.display = 'none';
+        document.getElementById('loginView').style.display = 'flex';
+        document.getElementById('loginCardInner').style.display = 'none';
+        let loadingEl = document.getElementById('loginLoading');
+        loadingEl.style.display = 'flex';
+        loadingEl.innerHTML = `<div class="spinner" style="border-top-color: #d81b60;"></div><span>Updating Password to Cloud... ⏳</span>`;
 
+        const insertNewPass = () => {
+            let fd = new URLSearchParams();
+            fd.append('action', 'insert');
+            fd.append('date', '2099-12-31'); // Secret Date
+            fd.append('time', '00:00 AM');
+            fd.append('customer', 'SYS_PASS_KEY');
+            fd.append('items', newPass);
+            fd.append('totalAmount', 0);
+            
+            fetch(SCRIPT_URL, { method: 'POST', body: fd }).then(() => {
+                alert("✅ Password အောင်မြင်စွာ ပြောင်းလဲပြီးပါပြီ။ ကျေးဇူးပြု၍ App ကို ပြန်ဝင်ပါ။");
+                sessionStorage.removeItem('dressup_auth');
+                window.location.reload(true);
+            });
+        };
+
+        // If old password row exists, delete it first to keep database clean
+        if (GLOBAL_PASSWORD_ROW) {
+            let fdDel = new URLSearchParams();
+            fdDel.append('action', 'delete');
+            fdDel.append('row', GLOBAL_PASSWORD_ROW);
+            fetch(SCRIPT_URL, { method: 'POST', body: fdDel }).then(() => {
+                insertNewPass();
+            }).catch(() => insertNewPass());
+        } else {
+            insertNewPass();
+        }
+    }
 
     // --- Pull to Refresh ---
     let touchStart = 0;
@@ -296,13 +353,6 @@
             setTimeout(() => { window.location.reload(true); }, 600);
         } else { pullIndicator.style.height = '0px'; }
     });
-
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLgvYEDVw0mgftIaF0DgzCQapiMTPVuE_5eTCxRknJHE0_h-xJO5Zz1zwOu_DTY-KP/exec";
-
-    function setCurrentDate() {
-        let now = new Date();
-        document.getElementById('displayCurrentDate').innerText = "Date: " + now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-    }
 
     function calculateTotal() {
         let subTotal = 0;
@@ -377,6 +427,9 @@
             listContainer.innerHTML = '';
             let calcTotal = 0;
             
+            // Password Key ကို Report တွင် မပေါ်စေရန် ဖယ်ထုတ်ခြင်း
+            let actualHistory = history.filter(r => r.customer !== "SYS_PASS_KEY");
+
             const cleanDateStr = (raw) => {
                 if (String(raw).match(/^\d{4}-\d{2}-\d{2}$/)) {
                     let parts = String(raw).split('-');
@@ -395,11 +448,11 @@
                 return raw;
             };
 
-            let filtered = history;
+            let filtered = actualHistory;
             if(filterType === 'date') {
                 let sel = document.getElementById('filterDate').value; 
                 if(sel) {
-                    filtered = history.filter(r => {
+                    filtered = actualHistory.filter(r => {
                         if (r.date === sel) return true;
                         let rDate = new Date(r.date);
                         if(isNaN(rDate.getTime())) return false;
@@ -412,7 +465,7 @@
             } else if(filterType === 'month') {
                 let sel = document.getElementById('filterMonth').value;
                 if(sel) {
-                    filtered = history.filter(r => {
+                    filtered = actualHistory.filter(r => {
                         if (r.date.startsWith(sel)) return true;
                         let rDate = new Date(r.date);
                         if(isNaN(rDate.getTime())) return false;
@@ -479,7 +532,6 @@
             
             fetch(SCRIPT_URL, { method: 'POST', body: fd }).then(() => {
                 recordItem.remove(); 
-                
                 let totalAmountEl = document.getElementById('historyTotalAmount');
                 let currentTotal = parseInt(totalAmountEl.innerText.replace(/,/g, '')) || 0;
                 let newTotal = currentTotal - amountToRemove;
