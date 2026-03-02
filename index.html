@@ -26,26 +26,19 @@
 
         .app-container { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding-bottom: 25px; max-width: 600px; margin: auto; position: relative; overflow: hidden; }
         
+        /* Watermark အတွက် မူလ logo.jpg ကိုသာ အသုံးပြုထားပါသည် */
         .watermark { display: none; }
         .app-container.exporting .watermark { display: flex; justify-content: center; align-items: center; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; opacity: 0.08; }
-        .app-container.exporting .watermark img { width: 80%; max-width: 350px; height: auto; }
+        .app-container.exporting .watermark img { width: 90%; max-width: 400px; height: auto; }
 
         .top-nav { max-width: 600px; margin: 0 auto 10px auto; text-align: right; }
         .report-btn { background: #d81b60; color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; box-shadow: 0 2px 5px rgba(216,27,96,0.2); }
         
+        /* Header Banner အတွက် သီးသန့် CSS */
         .header { text-align: center; border-bottom: 2px solid #d81b60; padding-bottom: 12px; margin-bottom: 15px; z-index: 2; position: relative; }
-        
-        /* Logo ကို အချိုးအစားမပျက်စေဘဲ Full Width Banner အဖြစ် ပြောင်းလဲထားပါသည် */
-        .header img.shop-logo { 
-            width: 100%; 
-            max-width: 100%; /* အကန့်အသတ်မရှိ အပြည့်ချဲ့မည် */
-            height: auto; /* မူလအချိုးအစားအတိုင်းသာ အလိုအလျောက် ချိန်ညှိမည် (လုံးဝမပြဲပါ) */
-            border-radius: 10px; 
-            margin-bottom: 10px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* Banner လို ကြွတက်နေစေရန် */
-        }
-        
+        .header img.shop-banner { width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto 8px auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .header .shop-address { color: #555; font-size: 11px; margin-top: 5px; line-height: 1.5; }
+        
         #displayCurrentDate { text-align: right; font-size: 13px; font-weight: bold; color: #d81b60; margin-bottom: 8px; padding-right: 2px; }
 
         .input-group { display: flex; align-items: center; margin-bottom: 10px; z-index: 2; position: relative; }
@@ -124,12 +117,15 @@
 
 <div id="mainView">
     <div class="top-nav"><button class="report-btn" onclick="openHistory()">📊 Online Sales Report</button></div>
+    
     <div class="app-container" id="invoiceCard">
         <div class="watermark"><img src="logo.jpg" alt="Watermark"></div>
+        
         <div class="header">
-            <img src="logo.jpg" alt="Logo" class="shop-logo">
+            <img src="banner.jpg" alt="Banner" class="shop-banner">
             <p class="shop-address">No.428(A), Thuta Street, (4) Ward, South Okkalapa Township, Yangon, Myanmar. <strong>Tel: +95 9 509 5013</strong></p>
         </div>
+
         <div id="displayCurrentDate">Date: </div>
         <div class="input-group"><label>Customer Name</label><input type="text" id="custName" class="header-input" placeholder="Enter name" autocomplete="off" onfocus="this.select()"></div>
         <div class="input-group"><label>Phone Number</label><input type="text" id="phone" class="header-input" placeholder="09..." autocomplete="off" onfocus="this.select()"></div>
@@ -173,8 +169,7 @@
 </div>
 
 <script>
-    // --- Auto Update Version ---
-    const APP_VERSION = "1.0.14"; 
+    const APP_VERSION = "1.0.17"; 
     function checkAppUpdate() {
         const storedVersion = localStorage.getItem('dressup_app_version');
         if (storedVersion !== APP_VERSION) { localStorage.setItem('dressup_app_version', APP_VERSION); window.location.reload(true); }
@@ -183,7 +178,6 @@
 
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLgvYEDVw0mgftIaF0DgzCQapiMTPVuE_5eTCxRknJHE0_h-xJO5Zz1zwOu_DTY-KP/exec";
 
-    // --- Pull to Refresh ---
     let touchStart = 0;
     const mainBody = document.getElementById('main-body');
     const pullIndicator = document.getElementById('pull-indicator');
